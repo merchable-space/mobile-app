@@ -8,7 +8,7 @@ angular.module('main', [
 .config(function ($stateProvider, $urlRouterProvider) {
 
   // ROUTING with ui.router
-  $urlRouterProvider.otherwise('/main/list');
+  $urlRouterProvider.otherwise('/main/dashboard');
   $stateProvider
     // this state is placed in the <ion-nav-view> in the index.html
     .state('main', {
@@ -17,30 +17,39 @@ angular.module('main', [
       templateUrl: 'main/templates/menu.html',
       controller: 'MenuCtrl as menu'
     })
-      .state('main.list', {
-        url: '/list',
+      .state('main.dashboard', {
+        url: '/dashboard',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/list.html',
+            templateUrl: 'main/templates/dashboard.html',
             // controller: '<someCtrl> as ctrl'
           }
         }
       })
-      .state('main.listDetail', {
-        url: '/list/detail',
+      .state('main.warnings', {
+        url: '/warnings',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/list-detail.html',
+            templateUrl: 'main/templates/warnings.html',
             // controller: '<someCtrl> as ctrl'
           }
         }
       })
-      .state('main.debug', {
-        url: '/debug',
+      .state('main.unavailable', {
+        url: '/unavailable',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/debug.html',
-            controller: 'DebugCtrl as ctrl'
+            templateUrl: 'main/templates/unavailable.html',
+            // controller: '<someCtrl> as ctrl'
+          }
+        }
+      })
+      .state('main.unshipped', {
+        url: '/unshipped',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/unshipped.html',
+            // controller: '<someCtrl> as ctrl'
           }
         }
       });

@@ -5,7 +5,7 @@
 
     <!-- header bar -->
     <!-- the nav bar will be updated as we navigate between views -->
-    <ion-nav-bar class="bar-stable">
+    <ion-nav-bar class="bar-royal">
       <!-- back button, shown if applicable -->
       <ion-nav-back-button>
       </ion-nav-back-button>
@@ -25,18 +25,41 @@
   <ion-side-menu side="left">
 
     <!-- menu header -->
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">Nav</h1>
+    <ion-header-bar class="bar-dark">
+      <h1 class="title">Navigation</h1>
     </ion-header-bar>
 
     <!-- menu content -->
     <ion-content>
       <ion-list>
-        <ion-item menu-close ui-sref="main.dashboard">
+        <ion-item menu-close class="item-icon-left" ui-sref="main.dashboard">
+          <i class="icon ion-android-home"></i>
           Dashboard
         </ion-item>
-        <ion-item menu-close ui-sref="main.debug">
-          Debug
+        <ion-item class="item-divider">
+          Stock
+        </ion-item>
+        <ion-item menu-close class="item-icon-left" ui-sref="main.warnings">
+          <i class="icon ion-battery-low"></i>
+          Warnings
+        </ion-item>
+        <ion-item menu-close class="item-icon-left" ui-sref="main.unavailable">
+          <i class="icon ion-close-circled"></i>
+          Unavailable
+        </ion-item>
+        <ion-item class="item-divider">
+          Orders
+        </ion-item>
+        <ion-item menu-close class="item-icon-left" ui-sref="main.unshipped">
+          <i class="icon ion-android-cart"></i>
+          Unshipped
+        </ion-item>
+        <ion-item class="item-divider">
+          User
+        </ion-item>
+        <ion-item menu-close class="item-icon-left" ui-sref="main.logout">
+          <i class="icon ion-android-exit"></i>
+          Log Out
         </ion-item>
       </ion-list>
     </ion-content>
