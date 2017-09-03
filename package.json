@@ -80,5 +80,8 @@
         "proxyMapTo": "https://echo.getpostman.com"
       }
     ]
+  },
+  "dependencies": {
+    "woocommerce-api": "^1.4.2"
   }
 }

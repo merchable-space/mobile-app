@@ -1,52 +1,24 @@
 'use strict';
 angular.module('main')
-.controller('DebugCtrl', function ($log, $http, $timeout, Main, Config, $cordovaDevice) {
+.controller('DebugCtrl', function (
+  $log, $http, $timeout, API, Config, $cordovaDevice
+) {
 
-  $log.log('Hello from your Controller: DebugCtrl in module main:. This is your controller:', this);
+  var WooCommerceAPI = require('woocommerce-api');
+  var siteUrl = 'https://smai.merchable.space';
 
-  // bind data from services
-  this.someData = Main.someData;
-  this.ENV = Config.ENV;
-  this.BUILD = Config.BUILD;
-  // get device info
-  ionic.Platform.ready(function () {
-    if (ionic.Platform.isWebView()) {
-      this.device = $cordovaDevice.getDevice();
-    }
-  }.bind(this));
+  var WooCommerce = new WooCommerceAPI({
+    url: siteUrl,
+    consumerKey: 'ck_a220189004babc3edee64072a901599918a5ae1d',
+    consumerSecret: 'cs_96132571a4754ebd85588138fb3f77984f10176c',
+    wpAPI: true,
+    version: 'wc/v1'
+  });
 
-  // PASSWORD EXAMPLE
-  this.password = {
-    input: '', // by user
-    strength: ''
-  };
-  this.grade = function () {
-    var size = this.password.input.length;
-    if (size > 8) {
-      this.password.strength = 'strong';
-    } else if (size > 3) {
-      this.password.strength = 'medium';
-    } else {
-      this.password.strength = 'weak';
-    }
-  };
-  this.grade();
-
-  // Proxy
-  this.proxyState = 'ready';
-  this.proxyRequestUrl = Config.ENV.SOME_OTHER_URL + '/get';
-
-  this.proxyTest = function () {
-    this.proxyState = '...';
-
-    $http.get(this.proxyRequestUrl)
-    .then(function (response) {
-      $log.log(response);
-      this.proxyState = 'success (result printed to browser console)';
-    }.bind(this))
-    .then($timeout(function () {
-      this.proxyState = 'ready';
-    }.bind(this), 6000));
-  };
+  this.getUnshippedOrders = function() {
+    WooCommerce.get('orders?status=processing', function(err, data, res) {
+      console.log(res);
+    });
+  }
 
 });
