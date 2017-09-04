@@ -21,8 +21,7 @@ angular.module('main', [
         url: '/dashboard',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/dashboard.html',
-            // controller: '<someCtrl> as ctrl'
+            templateUrl: 'main/templates/dashboard.html'
           }
         }
       })
@@ -30,8 +29,7 @@ angular.module('main', [
         url: '/warnings',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/warnings.html',
-            // controller: '<someCtrl> as ctrl'
+            templateUrl: 'main/templates/warnings.html'
           }
         }
       })
@@ -39,8 +37,7 @@ angular.module('main', [
         url: '/unavailable',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/unavailable.html',
-            // controller: '<someCtrl> as ctrl'
+            templateUrl: 'main/templates/unavailable.html'
           }
         }
       })
@@ -48,8 +45,23 @@ angular.module('main', [
         url: '/unshipped',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/unshipped.html',
-            // controller: '<someCtrl> as ctrl'
+            templateUrl: 'main/templates/unshipped.html'
+          }
+        }
+      })
+      .state('main.subscription', {
+        url: '/subscription',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/subscription.html'
+          }
+        }
+      })
+      .state('main.twitter', {
+        url: '/twitter',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/twitter.html'
           }
         }
       });
