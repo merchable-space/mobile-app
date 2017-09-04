@@ -1,10 +1,15 @@
 'use strict';
 angular.module('main')
 .controller('MenuCtrl', function (
+  $scope,
   $rootScope,
   $cordovaDevice,
-  $log
+  $log,
+  API
 ) {
+
+  var siteUrl = 'https://merchable.space';
+  var WooCommerce = API.WC(siteUrl);
 
   $rootScope.unshippedProducts = 12;
   $rootScope.lowStockProducts = 3;
@@ -12,45 +17,30 @@ angular.module('main')
 
   $rootScope.subExpiryDays = 10;
 
-  var thisDevice = $cordovaDevice;
-  var thisPlatform = thisDevice.platform;
-  $log.log(thisDevice.platform);
+  $log.log($rootScope.deviceDetails);
 
-  if (thisPlatform !== undefined) {
-      $rootScope.getIndex();
-
-      var WooCommerceAPI = require('woocommerce-api');
-      var siteUrl = 'https://smai.merchable.space';
-
-      var WooCommerce = new WooCommerceAPI({
-        url: siteUrl,
-        consumerKey: 'ck_a220189004babc3edee64072a901599918a5ae1d',
-        consumerSecret: 'cs_96132571a4754ebd85588138fb3f77984f10176c',
-        wpAPI: true,
-        version: 'wc/v1'
+    $rootScope.getIndex = function () {
+      WooCommerce.get('', function (err, data, res) {
+        $log.log(res);
       });
+    };
 
-      $rootScope.getIndex = function() {
-        WooCommerce.get('', function(err, data, res) {
-          $log.log(res);
-        });
-      }
+    $rootScope.getUnshippedOrders = function () {
+      WooCommerce.get('orders?status=processing', function (err, data, res) {
+        $log.log(res);
+      });
+    };
 
-      $rootScope.getUnshippedOrders = function() {
-        WooCommerce.get('orders?status=processing', function(err, data, res) {
-          $log.log(res);
-        });
-      }
+    $rootScope.markOrderShipped = function (id) {
+      var completion = {
+        status: 'completed'
+      };
 
-      $rootScope.markOrderShipped = function(id) {
-        var completion = {
-          status: 'completed'
-        };
+      WooCommerce.put('orders/' + id, completion, function (err, data, res) {
+        $log.log(res);
+      });
+    };
 
-        WooCommerce.put('orders/' + id, completion, function(err, data, res) {
-          $log.log(res);
-        });
-      }
-  }
+    $rootScope.getIndex();
 
 });
