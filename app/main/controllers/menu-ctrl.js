@@ -5,17 +5,12 @@ angular.module('main')
   $rootScope,
   $cordovaDevice,
   $log,
-  API
+  API,
+  MerchAPI
 ) {
 
-  var siteUrl = 'https://merchable.space';
-  var WooCommerce = API.WC(siteUrl);
-
-  $rootScope.unshippedProducts = 12;
-  $rootScope.lowStockProducts = 3;
-  $rootScope.noStockProducts = 4;
-
-  $rootScope.subExpiryDays = 10;
+  // WOOCOMMERCE API
+  var WooCommerce = API.WC();
 
   $log.log($rootScope.deviceDetails);
 
@@ -40,6 +35,18 @@ angular.module('main')
         $log.log(res);
       });
     };
+
+
+    // VARIABLES BELOW
+
+
+    $rootScope.unshippedObject = $rootScope.getUnshippedOrders();
+
+    $rootScope.unshippedProducts = $rootScope.unshippedObject.length;
+    $rootScope.lowStockProducts = 3;
+    $rootScope.noStockProducts = 4;
+
+    $rootScope.subExpiryDays = 10;
 
     $rootScope.getIndex();
 
