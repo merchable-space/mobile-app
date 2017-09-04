@@ -5,12 +5,19 @@ angular.module('main')
   $rootScope,
   $cordovaDevice,
   $log,
-  API,
-  MerchAPI
+  API
 ) {
 
+  // TWITTER
+  API.twitterAuth();
+
+  API.twitterTimeline()
+  .then(function (data) {
+    console.log('Timeline data:', data);
+  });
+
   // WOOCOMMERCE API
-  var WooCommerce = API.WC();
+  var WooCommerce = API.wooCommerce();
 
   $log.log($rootScope.deviceDetails);
 
