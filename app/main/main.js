@@ -3,19 +3,28 @@ angular.module('main', [
   'ionic',
   'ngCordova',
   'ui.router',
+  'ngStorage'
   // TODO: load other modules selected during generation
 ])
-.config(function ($stateProvider, $urlRouterProvider) {
+.config(function ($stateProvider, $urlRouterProvider, $localStorageProvider) {
+
+  $localStorageProvider.setKeyPrefix('merchStore-');
 
   // ROUTING with ui.router
-  $urlRouterProvider.otherwise('/main/dashboard');
+  $urlRouterProvider.otherwise('/login');
   $stateProvider
     // this state is placed in the <ion-nav-view> in the index.html
+    .state('login', {
+      url: '/login',
+      abstract: false,
+      templateUrl: 'main/templates/login.html',
+      controller: 'LoginCtrl as loginVm'
+    })
     .state('main', {
       url: '/main',
       abstract: true,
       templateUrl: 'main/templates/menu.html',
-      controller: 'MenuCtrl as menu'
+      controller: 'MenuCtrl as menuVm'
     })
       .state('main.dashboard', {
         url: '/dashboard',
@@ -46,6 +55,14 @@ angular.module('main', [
         views: {
           'pageContent': {
             templateUrl: 'main/templates/unshipped.html'
+          }
+        }
+      })
+      .state('main.settings', {
+        url: '/settings',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/settings.html'
           }
         }
       })

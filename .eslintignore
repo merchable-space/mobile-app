@@ -4,4 +4,6 @@
 
 # ignore bower_components
 app/bower_components
+
+# ignore scripts
 app/scripts
