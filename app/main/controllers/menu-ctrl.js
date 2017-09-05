@@ -1,53 +1,91 @@
 'use strict';
-angular.module('main')
-.controller('MenuCtrl', function (
-  $scope,
-  $rootScope,
-  $cordovaDevice,
-  $log,
-  API,
-  MerchAPI
-) {
+(function () {
+  angular
+    .module('main')
+    .controller('MenuCtrl', MenuCtrl);
 
-  // WOOCOMMERCE API
-  var WooCommerce = API.WC();
+  function MenuCtrl (
+    $state,
+    $scope,
+    $rootScope,
+    $cordovaDevice,
+    $log,
+    API,
+    MerchAPI,
+    Mithril
+  ) {
 
-  $log.log($rootScope.deviceDetails);
+    var menuVm = this;
+    var WooCommerce = API.WooCommerce();
 
-    $rootScope.getIndex = function () {
-      WooCommerce.get('', function (err, data, res) {
-        $log.log(res);
-      });
-    };
+    // GET USER DATA
+    MerchAPI.getUserMeta()
+    .then(function (resp) {
+        resp = resp.data;
+        Mithril.storage('userUrl', 'https://' + resp.site_url);
+        Mithril.storage('userKey', resp.con_key);
+        Mithril.storage('userSecret', resp.con_secret);
+    });
 
-    $rootScope.getUnshippedOrders = function () {
-      WooCommerce.get('orders?status=processing', function (err, data, res) {
-        $log.log(res);
-      });
-    };
+    // DEFINE MENU FUNCTIONS
+    menuVm.logout = logout;
+    menuVm.getIndex = getIndex;
+    menuVm.getAllProducts = getAllProducts;
+    menuVm.getUnshippedOrders = getUnshippedOrders;
+    menuVm.markOrderShipped = markOrderShipped;
 
-    $rootScope.markOrderShipped = function (id) {
-      var completion = {
-        status: 'completed'
-      };
+    // TEST FUNCTIONS
+    menuVm.getAllProducts();
+    $log.log('allProducts', Mithril.chest('allProducts'));
 
-      WooCommerce.put('orders/' + id, completion, function (err, data, res) {
-        $log.log(res);
-      });
-    };
+    // DEFINE MENU VARIABLES
+    menuVm.unshippedProducts = getArrayLength();
+    menuVm.lowStockProducts = 3;
+    menuVm.noStockProducts = 4;
+    menuVm.subExpiryDays = 10;
 
+    // GENERIC FUNCTIONS
+    function logout() {
+      $log.log('Logout requested');
+      $state.go('login');
+    }
 
-    // VARIABLES BELOW
+    function getArrayLength(array) {
+      if (angular.isObject(array)) {
+        return array.length;
+      }
+      else {
+        return 'N/A';
+      }
+    }
 
+    // WOOCOMMERCE FUNCTIONS
+    function getAllProducts() {
+        WooCommerce.get('products', function (err, data, res) {
+          Mithril.chest('allProducts', JSON.parse(res));
+        });
+    }
 
-    $rootScope.unshippedObject = $rootScope.getUnshippedOrders();
+    function getIndex() {
+        WooCommerce.get('', function (err, data, res) {
+          Mithril.chest('siteIndex', JSON.parse(res));
+        });
+    }
 
-    $rootScope.unshippedProducts = $rootScope.unshippedObject.length;
-    $rootScope.lowStockProducts = 3;
-    $rootScope.noStockProducts = 4;
+    function getUnshippedOrders() {
+        WooCommerce.get('orders?status=processing', function (err, data, res) {
+          Mithril.chest('unshippedOrders', JSON.parse(res));
+        });
+    }
 
-    $rootScope.subExpiryDays = 10;
+    function markOrderShipped(id) {
+        var completion = {
+            status: 'completed'
+        };
 
-    $rootScope.getIndex();
-
-});
+        WooCommerce.put('orders/' + id, completion, function (err, data, res) {
+          Mithril.storage('latestApiResponse', JSON.parse(res));
+        });
+    }
+  }
+})();

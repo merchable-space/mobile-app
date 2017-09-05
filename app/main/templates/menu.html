@@ -30,7 +30,7 @@
     </ion-header-bar>
 
     <!-- menu content -->
-    <ion-content>
+    <ion-content ng-controller="MenuCtrl">
       <ion-list>
         <ion-item menu-close class="item-icon-left" ui-sref="main.dashboard">
           <i class="icon ion-android-home"></i>
@@ -68,7 +68,7 @@
         <ion-item class="item-divider">
           User
         </ion-item>
-        <ion-item menu-close class="item-icon-left" ui-sref="main.logout">
+        <ion-item menu-close class="item-icon-left" ng-click="menuVm.logout()">
           <i class="icon ion-android-exit"></i>
           Log Out
         </ion-item>
