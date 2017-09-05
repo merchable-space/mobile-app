@@ -4,7 +4,7 @@
             pulling-text="Pull to refresh..."
             pulling-icon="ion-arrow-down-c"
             refreshing-text="Loading..."
-            spinner="ripple spinner-royal">
+            spinner="lines">
         </ion-refresher>
 
         <div class="card">
@@ -42,17 +42,15 @@
             </ion-list>
         </div>
 
-        <div class="card" ng-if="menuVm.subExpiryDays <= 10">
+        <div class="card">
             <ion-list>
                 <ion-item class="item-divider">
                     Subscription
                 </ion-item>
-                <ion-item class="item-padding" ui-sref="main.unshipped">
-                    <div class="dashboard-number red-text">
-                        {{menuVm.subExpiryDays}}
-                    </div>
-                    <div class="dashboard-text">
-                        days until subscription expires
+                <ion-item class="item-padding item-icon-left" ui-sref="main.unshipped">
+                    <i class="icon" ng-class="menuVm.subDangerIcon()"></i>
+                    <div class="dashboard-text" ng-class="menuVm.subDangerLevel()">
+                        {{menuVm.subDangerText()}}
                     </div>
                     <!-- <i class="icon ion-chevron-right icon-accessory"></i> -->
                 </ion-item>

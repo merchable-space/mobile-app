@@ -13,7 +13,7 @@
     // formatting, spaces, operators
     "indent": [0, 2, {"SwitchCase": 1}],
     "quotes": [2, "single"],
-    "semi": [2, "always"],
+    "semi": [1, "always"],
     "keyword-spacing": 2,
     "space-before-blocks": [2, "always"],
     "dot-location": [2, "property"],

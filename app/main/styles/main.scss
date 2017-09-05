@@ -12,7 +12,7 @@ $calm:                            #43cee6 !default;
 $balanced:                        #66cc33 !default;
 $energized:                       #f0b840 !default;
 $assertive:                       #ef4e3a !default;
-$royal:                           #8a6de9 !default;
+$royal:                           #5B35DA !default;
 $dark:                            #444 !default;
 
 // The path for our ionicons font files, relative to the built & temporary main.css
@@ -35,12 +35,26 @@ $ionicons-font-path: "../assets/fonts" !default;
 .dashboard-text {
     text-align: center;
     width: 100%;
+    word-wrap: normal;
+    white-space: normal;
 }
 
 .item-padding .item-content {
     padding: 10px 16px;
 }
 
+.amber-text {
+    color: #CA6F22;
+}
+
 .red-text {
     color: #9A1E0E;
+}
+
+.item-hint {
+    font-size: 0.7em;
+    font-style: italic;
+    color: #717171;
+    word-wrap: normal;
+    white-space: normal;
 }

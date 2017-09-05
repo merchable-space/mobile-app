@@ -10,6 +10,7 @@
     $rootScope,
     $cordovaDevice,
     $log,
+    MerchAPI,
     Icarus
   ) {
 
@@ -21,7 +22,7 @@
     loginVm.auth = auth;
 
     function login() {
-      $state.go('main.dashboard');
+      MerchAPI.authWordpressUser(loginVm.user);
     }
 
     function auth() {
