@@ -58,6 +58,14 @@ angular.module('main', [
           }
         }
       })
+      .state('main.settings', {
+        url: '/settings',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/settings.html'
+          }
+        }
+      })
       .state('main.subscription', {
         url: '/subscription',
         views: {

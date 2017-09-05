@@ -1,5 +1,12 @@
 <ion-view view-title="Dashboard">
     <ion-content ng-controller="MenuCtrl">
+        <ion-refresher on-refresh="menuVm.doRefresh()"
+            pulling-text="Pull to refresh..."
+            pulling-icon="ion-arrow-down-c"
+            refreshing-text="Loading..."
+            spinner="ripple spinner-royal">
+        </ion-refresher>
+
         <div class="card">
             <ion-list>
                 <ion-item class="item-divider">
@@ -35,7 +42,7 @@
             </ion-list>
         </div>
 
-        <div class="card" ng-show="subExpiryDays <= 10">
+        <div class="card" ng-if="menuVm.subExpiryDays <= 10">
             <ion-list>
                 <ion-item class="item-divider">
                     Subscription
