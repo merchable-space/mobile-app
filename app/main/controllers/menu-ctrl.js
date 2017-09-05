@@ -17,7 +17,6 @@
   ) {
 
     var menuVm = this;
-    var WooCommerce = API.WooCommerce();
 
     // GET USER DATA
     Icarus.spinner();
@@ -29,6 +28,8 @@
         Mithril.storage('userSecret', resp.con_secret);
         Icarus.hide();
     });
+
+    var WooCommerce = API.WooCommerce();
 
     // DEFINE MENU FUNCTIONS
     menuVm.logout = logout;

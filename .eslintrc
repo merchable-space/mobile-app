@@ -35,6 +35,7 @@
     "no-multi-str": 2,
     "no-irregular-whitespace": 2,
     "no-console": 0,
+    "no-undef": 1,
 
     // os/git options
     "no-trailing-spaces": 2,
