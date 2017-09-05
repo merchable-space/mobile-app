@@ -5,10 +5,32 @@ angular.module('main', [
   'ui.router',
   'ngStorage'
 ])
-.config(function ($stateProvider, $urlRouterProvider, $localStorageProvider) {
+.config(function ($stateProvider, $urlRouterProvider, $localStorageProvider, $httpProvider) {
 
   // LOCAL STORAGE
   $localStorageProvider.setKeyPrefix('merchStore-');
+
+  // VALIDATE EVERYTHING VIA JWT AUTH
+  $httpProvider.interceptors.push([
+    '$q',
+    '$location',
+    '$injector',
+    function(
+      $q,
+      $location,
+      $injector
+    ) {
+      return {
+        'request': function( config ) {
+          config.headers = config.headers || {};
+          var Mithril = $injector.get('Mithril');
+          if ( Mithril.storage('userWPToken') ) {
+            config.headers.Authorization = 'Bearer ' + Mithril.storage('userWPToken');
+          }
+          return config;
+        }
+      };
+  }]);
 
   // ROUTING
   $urlRouterProvider.otherwise('/login');
@@ -24,8 +46,7 @@ angular.module('main', [
       url: '/main',
       abstract: true,
       templateUrl: 'main/templates/menu.html',
-      controller: 'MenuCtrl as menuVm',
-      authenticate: true
+      controller: 'MenuCtrl as menuVm'
     })
       .state('main.dashboard', {
         url: '/dashboard',

@@ -110,7 +110,6 @@
     function saveUserSettings() {
       Mithril.chest('userSettings', menuVm.userSettings);
       Icarus.show('Settings saved', true, 2000);
-      $state.go('main.dashboard');
     }
 
     function getArrayLength(array) {
