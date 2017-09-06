@@ -18,6 +18,9 @@ angular.module('main')
 
 
     function authWordpressUser(user) {
+        if (user.remember_me) {
+            Mithril.storage('userCredentials', user);
+        }
         return $http.post('https://' + user.store + '.merchable.space/wp-json/jwt-auth/v1/token', {
             username: user.username,
             password: user.password
@@ -25,14 +28,14 @@ angular.module('main')
         .then(function(response) {
             response = response.data;
             if (response.token) {
-                Mithril.storage('userWPToken', response.token);
-                Mithril.storage('userWPHeader', 'Bearer ' + response.token);
-                $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
+                Mithril.chest('userWPToken', response.token);
+                Mithril.chest('userWPHeader', 'Bearer ' + response.token);
+                $http.defaults.headers.common['WP-Authoriser'] = Mithril.chest('userWPHeader');
 
                 $state.go('main.dashboard');
             }
             else {
-                Mithril.storage('userWPToken', null);
+                Mithril.chest('userWPToken', null);
                 Icarus.hide();
                 Icarus.alert('Unable To Login', 'Could not validate credentials');
                 return false;
@@ -42,7 +45,7 @@ angular.module('main')
             error = error.data;
             Icarus.hide();
 
-            Mithril.storage('userWPToken', null);
+            Mithril.chest('userWPToken', null);
 
             Icarus.alert('Unable To Login', error.message);
             return false;

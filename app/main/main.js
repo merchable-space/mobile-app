@@ -11,10 +11,9 @@ angular.module('main', [
       var Mithril = $injector.get('Mithril');
       var $http = $injector.get('$http');
 
-      config.headers['WP-Authoriser'] = Mithril.storage('userWPHeader');
-      $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
+      config.headers['WP-Authoriser'] = Mithril.chest('userWPHeader');
+      $http.defaults.headers.common['WP-Authoriser'] = Mithril.chest('userWPHeader');
 
-      console.log('Config:', config);
       return config;
     }
   };

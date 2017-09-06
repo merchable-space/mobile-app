@@ -39,8 +39,8 @@
     menuVm.markOrderShipped = markOrderShipped;
 
     $scope.$on('$ionicView.beforeEnter', function() {
-      if (! Mithril.storage('userWPToken')) {
-        $state.go('login');
+      if (! Mithril.chest('userWPToken')) {
+        menuVm.logout();
       }
 
       menuVm.startUserData();
@@ -75,6 +75,8 @@
       menuVm.getUnshippedOrders();
 
       $scope.$broadcast('scroll.refreshComplete');
+
+      console.log(Mithril.pandora());
     }
 
     function startUserData() {
@@ -87,13 +89,14 @@
           Mithril.storage('userKey', resp.con_key);
           Mithril.storage('userSecret', resp.con_secret);
           Mithril.storage('userLogo', resp.logo);
+
+          Mithril.storage('dataCache', false);
           Icarus.hide();
       });
     }
 
     function logout() {
-      Mithril.destroy('userWPToken');
-      Mithril.destroy('userWPHeader');
+      Mithril.wipeout();
       $state.go('login');
     }
 
@@ -127,7 +130,9 @@
 
     function subDangerText() {
       if (menuVm.subExpiryDays <= 0) {
-        return 'Your subscription expired ' + Math.abs(menuVm.subExpiryDays) + ' days ago';
+        var dayTerm = Math.abs(menuVm.subExpiryDays) === 1 ? ' day' : ' days';
+
+        return 'Your subscription expired ' + Math.abs(menuVm.subExpiryDays) + dayTerm + ' ago';
       }
       else {
         return 'Your subscription expires in ' + menuVm.subExpiryDays + ' days';
@@ -172,8 +177,9 @@
         var variants = {};
 
         angular.forEach(products, function(product) {
+          var prodId = product.id;
           if (product.type === 'variable') {
-            variants[product.id] = menuVm.getProductVariants(product.id);
+            variants[prodId] = menuVm.getProductVariants(prodId);
           }
         });
 
@@ -182,7 +188,10 @@
     }
 
     function getProductVariants(id) {
-      WooCommerce.get('products/' + id + '/variations', function(err, data, res) {
+      console.log('Getting variants for product ' + id);
+      var wooUrl = 'products/' + id + '/variations';
+      console.log('Woo URL: ', wooUrl)
+      WooCommerce.get(wooUrl, function(err, data, res) {
         return JSON.parse(res);
       });
     }

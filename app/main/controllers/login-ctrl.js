@@ -22,6 +22,9 @@
     loginVm.login = login;
 
     function login() {
+      // Always remember
+      loginVm.user['remember_me'] = true;
+
       Icarus.spinner();
       MerchAPI.authWordpressUser(loginVm.user);
     }
