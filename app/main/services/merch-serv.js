@@ -27,6 +27,7 @@ angular.module('main')
             if (response.token) {
                 Mithril.storage('userWPToken', response.token);
                 Mithril.storage('userWPHeader', 'Bearer ' + response.token);
+                $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
 
                 $state.go('main.dashboard');
             }
@@ -38,11 +39,12 @@ angular.module('main')
             }
         })
         .catch(function(error) {
-            Mithril.storage('userWPToken', null);
-            if (error.data['status'] === 403) {
-                Icarus.alert('Unable To Login', 'Incorrect credentials');
-            }
+            error = error.data;
             Icarus.hide();
+
+            Mithril.storage('userWPToken', null);
+
+            Icarus.alert('Unable To Login', error.message);
             return false;
         });
     }

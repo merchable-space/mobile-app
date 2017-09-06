@@ -11,11 +11,10 @@ angular.module('main', [
       var Mithril = $injector.get('Mithril');
       var $http = $injector.get('$http');
 
-      if ( Mithril.storage('userWPToken') ) {
-        config.headers['Authorization'] = Mithril.storage('userWPHeader');
-        $http.defaults.headers.common['Authorization'] = Mithril.storage('userWPHeader');
-      }
+      config.headers['WP-Authoriser'] = Mithril.storage('userWPHeader');
+      $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
 
+      console.log('Config:', config);
       return config;
     }
   };
@@ -49,6 +48,14 @@ angular.module('main', [
         views: {
           'pageContent': {
             templateUrl: 'main/templates/dashboard.html'
+          }
+        }
+      })
+      .state('main.stock', {
+        url: '/stock',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/stock.html'
           }
         }
       })

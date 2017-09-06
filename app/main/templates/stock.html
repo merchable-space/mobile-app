@@ -1,0 +1,18 @@
+<ion-view view-title="All Products">
+    <ion-content>
+        <ion-list>
+            <ion-item class="item-divider">
+                Stock Warning Trigger
+                <div class="item-hint">At what point should a product trigger a low stock warning?</div>
+            </ion-item>
+            <ion-item>
+                <input type="number" ng-model="menuVm.userSettings.stockTrigger" required="required" autocapitalize="none">
+            </ion-item>
+            <ion-item>
+                <button class="button button-block button-royal" ng-click="menuVm.saveUserSettings()">
+                    Save Settings
+                </button>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
