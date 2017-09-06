@@ -11,6 +11,7 @@
     $cordovaDevice,
     $log,
     MerchAPI,
+    Mithril,
     Icarus
   ) {
 
@@ -19,14 +20,10 @@
     loginVm.user = {};
 
     loginVm.login = login;
-    loginVm.auth = auth;
 
     function login() {
-      MerchAPI.authWordpressUser(loginVm.user);
-    }
-
-    function auth() {
       Icarus.spinner();
+      MerchAPI.authWordpressUser(loginVm.user);
     }
   }
 })();

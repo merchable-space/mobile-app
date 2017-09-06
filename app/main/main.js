@@ -5,35 +5,31 @@ angular.module('main', [
   'ui.router',
   'ngStorage'
 ])
+.factory('httpRequestInterceptor', function ($injector) {
+  return {
+    request: function (config) {
+      var Mithril = $injector.get('Mithril');
+      var $http = $injector.get('$http');
+
+      if ( Mithril.storage('userWPToken') ) {
+        config.headers['Authorization'] = Mithril.storage('userWPHeader');
+        $http.defaults.headers.common['Authorization'] = Mithril.storage('userWPHeader');
+      }
+
+      return config;
+    }
+  };
+})
 .config(function ($stateProvider, $urlRouterProvider, $localStorageProvider, $httpProvider) {
 
   // LOCAL STORAGE
   $localStorageProvider.setKeyPrefix('merchStore-');
 
   // VALIDATE EVERYTHING VIA JWT AUTH
-  $httpProvider.interceptors.push([
-    '$q',
-    '$location',
-    '$injector',
-    function(
-      $q,
-      $location,
-      $injector
-    ) {
-      return {
-        'request': function( config ) {
-          config.headers = config.headers || {};
-          var Mithril = $injector.get('Mithril');
-          if ( Mithril.storage('userWPToken') ) {
-            config.headers.Authorization = 'Bearer ' + Mithril.storage('userWPToken');
-          }
-          return config;
-        }
-      };
-  }]);
+  $httpProvider.interceptors.push('httpRequestInterceptor');
 
   // ROUTING
-  $urlRouterProvider.otherwise('/login');
+  $urlRouterProvider.otherwise('main/dashboard');
   $stateProvider
     // this state is placed in the <ion-nav-view> in the index.html
     .state('login', {

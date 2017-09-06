@@ -26,12 +26,13 @@ angular.module('main')
             response = response.data;
             if (response.token) {
                 Mithril.storage('userWPToken', response.token);
-                $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+                Mithril.storage('userWPHeader', 'Bearer ' + response.token);
 
                 $state.go('main.dashboard');
             }
             else {
                 Mithril.storage('userWPToken', null);
+                Icarus.hide();
                 Icarus.alert('Unable To Login', 'Could not validate credentials');
                 return false;
             }
@@ -41,6 +42,7 @@ angular.module('main')
             if (error.data['status'] === 403) {
                 Icarus.alert('Unable To Login', 'Incorrect credentials');
             }
+            Icarus.hide();
             return false;
         });
     }

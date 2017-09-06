@@ -7,6 +7,8 @@
             spinner="lines">
         </ion-refresher>
 
+        <img ng-src="{{menuVm.logoImageBase}}" style="width: 100%;margin: 10px auto 0px auto;" />
+
         <div class="card">
             <ion-list>
                 <ion-item class="item-divider">
@@ -47,7 +49,7 @@
                 <ion-item class="item-divider">
                     Subscription
                 </ion-item>
-                <ion-item class="item-padding item-icon-left" ui-sref="main.unshipped">
+                <ion-item class="item-padding item-icon-left" ui-sref="main.subscription">
                     <i class="icon" ng-class="menuVm.subDangerIcon()"></i>
                     <div class="dashboard-text" ng-class="menuVm.subDangerLevel()">
                         {{menuVm.subDangerText()}}
