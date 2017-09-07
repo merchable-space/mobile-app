@@ -24,6 +24,7 @@
     menuVm.logout = logout;
     menuVm.amIUndefined = amIUndefined;
     menuVm.doRefresh = doRefresh;
+    menuVm.serviceStatusIcon = serviceStatusIcon;
     menuVm.subDangerLevel = subDangerLevel;
     menuVm.subDangerIcon = subDangerIcon;
     menuVm.subDangerText = subDangerText;
@@ -31,6 +32,7 @@
     menuVm.resetVariables = resetVariables;
     menuVm.updateUserMeta = updateUserMeta;
     menuVm.getSubDaysLeft = getSubDaysLeft;
+    menuVm.updateServiceStatus = updateServiceStatus;
 
     // DEFINE PRODUCT FUNCTIONS
     menuVm.getAllProducts = getAllProducts;
@@ -41,6 +43,7 @@
     menuVm.markOrderShipped = markOrderShipped;
 
     if (menuVm.amIUndefined(Mithril.chest('userWPToken'))) {
+      Icarus.hide();
       menuVm.logout();
       return false;
     }
@@ -80,6 +83,7 @@
       menuVm.getAllProducts();
       menuVm.returnAllVariantStock();
       menuVm.getStockWarnings();
+      menuVm.updateServiceStatus();
 
       // Hides the spinner; keep last
       menuVm.getUnshippedOrders();
@@ -105,6 +109,7 @@
             resp = resp.data;
             Mithril.storage('subStarted', resp.sub_renewed);
             Mithril.storage('subExpires', resp.sub_expires);
+            Mithril.storage('subDaysLeft', resp.sub_days);
             Mithril.storage('subStatus', resp.status_text);
           });
       });
@@ -116,14 +121,23 @@
     }
 
     function getSubDaysLeft() {
-      var subStarted = new Date(Mithril.storage('subStarted'));
-      var subExpires = new Date(Mithril.storage('subExpires'));
-      var dayDiff = (subExpires - subStarted)  / 1000 / 60 / 60 / 24;
+      menuVm.subStartedDate = Mithril.storage('subStarted');
+      menuVm.subExpiresDate = Mithril.storage('subExpires');
 
       menuVm.subStatusMessage = Mithril.storage('subStatus');
-      menuVm.subStartedDate = subStarted.toDateString();
-      menuVm.subExpiresDate = subExpires.toDateString();
-      menuVm.subExpiryDays = Math.round(dayDiff);
+      menuVm.subExpiryDays = Math.round(Mithril.storage('subDaysLeft'));
+    }
+
+    function serviceStatusIcon(number) {
+      number = Math.round(number);
+      switch (number) {
+        case 0:
+          return 'ion-checkmark-circled green-text';
+        case 1:
+          return 'ion-alert-circled amber-text';
+        case 2:
+          return 'ion-close-circled red-text';
+      }
     }
 
     function subDangerIcon() {
@@ -169,7 +183,7 @@
 
     function saveUserSettings() {
       Mithril.chest('userSettings', menuVm.userSettings);
-      Icarus.show('Settings saved', true, 2000);
+      Icarus.saved('Settings saved', 'ion-checkmark-circled', true, 2000);
     }
 
     function getArrayLength(array) {
@@ -193,6 +207,18 @@
     function updateUserMeta() {
       menuVm.getSubDaysLeft();
       menuVm.logoImageBase = Mithril.storage('userLogo');
+    }
+
+    function updateServiceStatus() {
+      MerchAPI.getServiceStatus()
+      .then(function (resp) {
+          resp = resp.data;
+
+          menuVm.serviceStatus = resp;
+          Mithril.chest('serviceStatus', resp);
+      });
+
+      $scope.$broadcast('scroll.refreshComplete');
     }
 
     // PRODUCTS
@@ -297,7 +323,7 @@
       WooCommerce.put('orders/' + id, completion, function (err, data, res) {
         if (res) {
           Icarus.hide();
-          Icarus.show('Order shipped!', true, 2000);
+          Icarus.saved('Order shipped!', 'ion-thumbsup', true, 2000);
           menuVm.getUnshippedOrders();
         }
       });

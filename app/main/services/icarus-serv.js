@@ -32,6 +32,7 @@
             prompt: prompt,
             custom: custom,
             show: show,
+            saved: saved,
             spinner: spinner,
             hide: hide
         };
@@ -175,6 +176,45 @@
             }
 
             var content = '<p>' + text + '</p>';
+
+            var options = {
+                template: content,
+                animation: 'fade-in',
+                showBackdrop: dimmer
+            };
+
+            $ionicLoading.show(options);
+
+            if (autoclose) {
+                $window.setTimeout(function() {
+                    $ionicLoading.hide();
+                }, autoclose);
+            }
+        }
+
+        /*
+         * Triggers a small popup message, with optional auto-close (in milliseconds)
+         *
+         * INPUT: text (str), dimmer (bool), autoclose (int)
+         * RETURNS: N/A
+         */
+        function saved(text, icon, dimmer, autoclose) {
+
+            if (text === undefined) {
+                spinner();
+                return false;
+            }
+
+            if (dimmer === undefined) {
+                dimmer = true;
+            }
+
+            if (dimmer === undefined) {
+                dimmer = true;
+            }
+
+            var content = '<div style="font-size: 2.5em; text-align: center; margin-bottom: 10px;"><i class="icon ' + icon + '"></i></div>';
+            content += '<p>' + text + '</p>';
 
             var options = {
                 template: content,

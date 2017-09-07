@@ -104,11 +104,11 @@ angular.module('main', [
           }
         }
       })
-      .state('main.twitter', {
-        url: '/twitter',
+      .state('main.service', {
+        url: '/service',
         views: {
           'pageContent': {
-            templateUrl: 'main/templates/twitter.html'
+            templateUrl: 'main/templates/service.html'
           }
         }
       });

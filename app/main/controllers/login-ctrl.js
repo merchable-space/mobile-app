@@ -15,6 +15,12 @@
     Icarus
   ) {
 
+    $scope.$on('$ionicView.enter', function() {
+      // Login page has loaded; hide the app-boot spinner
+      Icarus.hide();
+    });
+
+
     var loginVm = this;
 
     loginVm.user = {};

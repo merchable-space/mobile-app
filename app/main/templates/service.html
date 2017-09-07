@@ -1,0 +1,26 @@
+<ion-view view-title="Service Updates">
+    <ion-content>
+        <ion-refresher on-refresh="menuVm.updateServiceStatus()"
+        pulling-text="Pull to refresh..."
+        pulling-icon="ion-arrow-down-c"
+        refreshing-text="Loading..."
+        spinner="lines">
+        </ion-refresher>
+
+        <div class="card" ng-repeat="status in menuVm.serviceStatus">
+            <ion-list>
+                <ion-item class="item-divider item-dark">
+                        {{status.updated_on | date:"dd MMMM yyyy HH:mm"}}
+                </ion-item>
+                <ion-item style="text-align: center;">
+                    <i class="icon status-icon" ng-class="menuVm.serviceStatusIcon(status.status_code)"></i>
+                </ion-item>
+                <ion-item>
+                    <span class="dashboard-text">
+                            {{status.status_text}}
+                    </span>
+                </ion-item>
+            </ion-list>
+        </div>
+    </ion-content>
+</ion-view>

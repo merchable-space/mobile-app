@@ -45,7 +45,7 @@ $ionicons-font-path: "../assets/fonts" !default;
 }
 
 .amber-text {
-    color: #CA6F22;
+    color: #DB843A;
 }
 
 .red-text {
@@ -63,4 +63,12 @@ $ionicons-font-path: "../assets/fonts" !default;
 .clear-table {
     border: none;
     width: 100%;
+}
+
+.status-icon {
+    font-size: 3em;
+}
+
+.loading > p {
+    margin: 0;
 }

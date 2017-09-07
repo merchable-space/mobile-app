@@ -11,7 +11,8 @@ angular.module('main')
     var functions = {
         authWordpressUser: authWordpressUser,
         getUserMeta: getUserMeta,
-        getUserSub: getUserSub
+        getUserSub: getUserSub,
+        getServiceStatus: getServiceStatus
     };
 
     return functions;
@@ -76,6 +77,18 @@ angular.module('main')
             url: 'http://api.merchable.space/get_user_sub.php',
             headers: {
                 'user_id': user,
+                'api_key': 'jICLzvKFaCCUFfrGqer9'
+            }
+        };
+
+        return $http(req);
+    }
+
+    function getServiceStatus() {
+        var req = {
+            method: 'GET',
+            url: 'http://api.merchable.space/get_service_status.php',
+            headers: {
                 'api_key': 'jICLzvKFaCCUFfrGqer9'
             }
         };
