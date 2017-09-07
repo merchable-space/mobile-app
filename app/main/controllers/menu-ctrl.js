@@ -22,6 +22,7 @@
     // DEFINE MENU FUNCTIONS
     menuVm.startUserData = startUserData;
     menuVm.logout = logout;
+    menuVm.amIUndefined = amIUndefined;
     menuVm.doRefresh = doRefresh;
     menuVm.subDangerLevel = subDangerLevel;
     menuVm.subDangerIcon = subDangerIcon;
@@ -38,15 +39,13 @@
     menuVm.getUnshippedOrders = getUnshippedOrders;
     menuVm.markOrderShipped = markOrderShipped;
 
-    $scope.$on('$ionicView.beforeEnter', function() {
-      if (! Mithril.chest('userWPToken')) {
-        menuVm.logout();
-      }
+    if (menuVm.amIUndefined(Mithril.chest('userWPToken'))) {
+      menuVm.logout();
+      return false;
+    }
 
-      menuVm.startUserData();
-      menuVm.resetVariables();
-    });
-
+    menuVm.startUserData();
+    menuVm.resetVariables();
     var WooCommerce = API.WooCommerce();
 
     // SETTINGS VARIABLES
@@ -60,23 +59,30 @@
 
     // VARIABLES ARE SET - START LOADING
     menuVm.doRefresh();
-    Icarus.hide();
 
     // GENERIC FUNCTIONS
+
+    function amIUndefined(item) {
+      if (item === null) {
+        return true;
+      }
+
+      if (item === undefined) {
+        return true;
+      }
+    }
 
     function doRefresh() {
       menuVm.resetVariables();
       menuVm.updateUserMeta();
 
       menuVm.getAllProducts();
-      menuVm.getProductVariants();
       menuVm.returnAllVariantStock();
       menuVm.getStockWarnings();
       menuVm.getUnshippedOrders();
 
       $scope.$broadcast('scroll.refreshComplete');
-
-      console.log(Mithril.pandora());
+      Icarus.hide();
     }
 
     function startUserData() {
@@ -91,7 +97,6 @@
           Mithril.storage('userLogo', resp.logo);
 
           Mithril.storage('dataCache', false);
-          Icarus.hide();
       });
     }
 
@@ -132,10 +137,10 @@
       if (menuVm.subExpiryDays <= 0) {
         var dayTerm = Math.abs(menuVm.subExpiryDays) === 1 ? ' day' : ' days';
 
-        return 'Your subscription expired ' + Math.abs(menuVm.subExpiryDays) + dayTerm + ' ago';
+        return 'Expired ' + Math.abs(menuVm.subExpiryDays) + dayTerm + ' ago';
       }
       else {
-        return 'Your subscription expires in ' + menuVm.subExpiryDays + ' days';
+        return 'Expires in ' + menuVm.subExpiryDays + dayTerm;
       }
     }
 
@@ -160,6 +165,7 @@
       menuVm.lowStockProducts = 0;
       menuVm.noStockProducts = 0;
       menuVm.subExpiryDays = 0;
+      menuVm.subDangerStatus = 'OK!';
     }
 
     function updateUserMeta() {
@@ -169,30 +175,27 @@
     // PRODUCTS
 
     function getAllProducts() {
-      console.log('Getting all products');
       WooCommerce.get('products', function (err, data, res) {
         var products = JSON.parse(res);
         Mithril.chest('allProducts', products);
 
-        var variants = {};
+        menuVm.productList = products;
+        menuVm.productVariants = {};
 
         angular.forEach(products, function(product) {
           var prodId = product.id;
           if (product.type === 'variable') {
-            variants[prodId] = menuVm.getProductVariants(prodId);
+            menuVm.getProductVariants(prodId);
           }
         });
 
-        Mithril.chest('allVariants', variants);
+        Mithril.chest('allVariants', menuVm.productVariants);
       });
     }
 
     function getProductVariants(id) {
-      console.log('Getting variants for product ' + id);
-      var wooUrl = 'products/' + id + '/variations';
-      console.log('Woo URL: ', wooUrl)
-      WooCommerce.get(wooUrl, function(err, data, res) {
-        return JSON.parse(res);
+      WooCommerce.get('products/' + id + '/variations', function(err, data, res) {
+        menuVm.productVariants[id] = JSON.parse(res);
       });
     }
 
@@ -254,20 +257,25 @@
     // ORDERS
 
     function getUnshippedOrders() {
-      console.log('Getting unshipped orders');
       WooCommerce.get('orders?status=processing', function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
+        menuVm.unshippedOrders = JSON.parse(res);
       });
+      $scope.$broadcast('scroll.refreshComplete');
     }
 
     function markOrderShipped(id) {
-      console.log('Marking order ' + id + ' as shipped');
+      Icarus.spinner();
       var completion = {
           status: 'completed'
       };
 
       WooCommerce.put('orders/' + id, completion, function (err, data, res) {
-        Mithril.storage('latestApiResponse', JSON.parse(res));
+        if (res) {
+          Icarus.hide();
+          Icarus.show('Order shipped!', true, 2000);
+          menuVm.getUnshippedOrders();
+        }
       });
     }
   }

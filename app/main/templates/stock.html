@@ -1,18 +1,59 @@
 <ion-view view-title="All Products">
     <ion-content>
-        <ion-list>
-            <ion-item class="item-divider">
-                Stock Warning Trigger
-                <div class="item-hint">At what point should a product trigger a low stock warning?</div>
-            </ion-item>
-            <ion-item>
-                <input type="number" ng-model="menuVm.userSettings.stockTrigger" required="required" autocapitalize="none">
-            </ion-item>
-            <ion-item>
-                <button class="button button-block button-royal" ng-click="menuVm.saveUserSettings()">
-                    Save Settings
-                </button>
-            </ion-item>
-        </ion-list>
+        <div class="card" ng-repeat="product in menuVm.productList">
+            <ion-list>
+                <ion-item class="item-divider">
+                    {{product.name}}
+                    <div class="item-hint">{{product.categories[0].name}}</div>
+                </ion-item>
+                <ion-item>
+                    <img ng-src="{{product.images[0].src}}" style="width: 100%;" />
+                </ion-item>
+                <ion-item>
+                    <table class="clear-table" ng-if="product.type === 'single'">
+                        <tr>
+                            <td style="font-weight: 600;">
+                                Price
+                            </td>
+                            <td style="text-align: right;">
+                                {{product.price | number:2}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">
+                                Stock
+                            </td>
+                            <td style="text-align: right;">
+                                {{product.stock_quantity}}
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="clear-table" ng-if="product.type === 'variable'">
+                        <tr style="font-weight: 600;border-bottom: 1px solid #888">
+                            <td>
+                                Variant
+                            </td>
+                            <td style="text-align: right;">
+                                Price
+                            </td>
+                            <td style="text-align: right;">
+                                Stock
+                            </td>
+                        </tr>
+                        <tr ng-repeat="variant in menuVm.productVariants[product.id]" ng-class="{'amber-text' : variant.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text' : variant.stock_quantity == 0}">
+                            <td>
+                                {{variant.sku}}
+                            </td>
+                            <td style="text-align: right;">
+                                {{variant.price | number:2}}
+                            </td>
+                            <td style="text-align: right;">
+                                {{variant.stock_quantity}}
+                            </td>
+                        </tr>
+                    </table>
+                </ion-item>
+            </ion-list>
+        </div>
     </ion-content>
 </ion-view>

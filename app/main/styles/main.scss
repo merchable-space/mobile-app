@@ -27,9 +27,6 @@ $ionicons-font-path: "../assets/fonts" !default;
 .dashboard-number {
     font-size: 2em;
     font-weight: 700;
-    width: 100%;
-    padding: 8px;
-    text-align: center;
 }
 
 .dashboard-text {
@@ -57,4 +54,9 @@ $ionicons-font-path: "../assets/fonts" !default;
     color: #717171;
     word-wrap: normal;
     white-space: normal;
+}
+
+.clear-table {
+    border: none;
+    width: 100%;
 }

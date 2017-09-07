@@ -11,50 +11,48 @@
 
         <div class="card">
             <ion-list>
-                <ion-item class="item-divider">
+                <ion-item class="item-divider item-dark">
                     Summary
                 </ion-item>
-                <ion-item class="item-padding" ui-sref="main.unshipped">
+                <ion-item class="item-divider">
+                    Unshipped Orders
+                </ion-item>
+                <ion-item class="item-icon-right" ui-sref="main.unshipped">
                     <div class="dashboard-number">
                         {{menuVm.unshippedProducts}}
                     </div>
-                    <div class="dashboard-text">
-                        orders waiting to be shipped
-                    </div>
-                    <!-- <i class="icon ion-chevron-right icon-accessory"></i> -->
+                    <i class="icon ion-chevron-right icon-accessory"></i>
                 </ion-item>
-                <ion-item class="item-padding" ui-sref="main.warnings">
+                <ion-item class="item-divider">
+                    Low Stock Warnings
+                </ion-item>
+                <ion-item class="item-icon-right" ui-sref="main.warnings">
                     <div class="dashboard-number">
                         {{menuVm.lowStockProducts}}
                     </div>
-                    <div class="dashboard-text">
-                        products with low stock levels
-                    </div>
-                    <!-- <i class="icon ion-chevron-right icon-accessory"></i> -->
+                    <i class="icon ion-chevron-right icon-accessory"></i>
                 </ion-item>
-                <ion-item class="item-padding" ui-sref="main.unavailable">
+                <ion-item class="item-divider">
+                    Products Out Of Stock
+                </ion-item>
+                <ion-item class="item-icon-right" ui-sref="main.unavailable">
                     <div class="dashboard-number">
                         {{menuVm.noStockProducts}}
                     </div>
-                    <div class="dashboard-text">
-                        products that are out of stock
-                    </div>
-                    <!-- <i class="icon ion-chevron-right icon-accessory"></i> -->
+                    <i class="icon ion-chevron-right icon-accessory"></i>
                 </ion-item>
             </ion-list>
         </div>
 
         <div class="card">
             <ion-list>
-                <ion-item class="item-divider">
+                <ion-item class="item-divider item-dark">
                     Subscription
                 </ion-item>
-                <ion-item class="item-padding item-icon-left" ui-sref="main.subscription">
+                <ion-item class="item-icon-left item-icon-right" ng-class="menuVm.subDangerLevel()" ui-sref="main.subscription">
                     <i class="icon" ng-class="menuVm.subDangerIcon()"></i>
-                    <div class="dashboard-text" ng-class="menuVm.subDangerLevel()">
-                        {{menuVm.subDangerText()}}
-                    </div>
-                    <!-- <i class="icon ion-chevron-right icon-accessory"></i> -->
+                    {{menuVm.subDangerText()}}
+                    <i class="icon ion-chevron-right icon-accessory"></i>
                 </ion-item>
             </ion-list>
         </div>
