@@ -11,8 +11,8 @@ angular.module('main', [
       var Mithril = $injector.get('Mithril');
       var $http = $injector.get('$http');
 
-      config.headers['WP-Authoriser'] = Mithril.chest('userWPHeader');
-      $http.defaults.headers.common['WP-Authoriser'] = Mithril.chest('userWPHeader');
+      config.headers['WP-Authoriser'] = Mithril.storage('userWPHeader');
+      $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
 
       return config;
     }
@@ -38,12 +38,14 @@ angular.module('main', [
     // this state is placed in the <ion-nav-view> in the index.html
     .state('login', {
       url: '/login',
+      cache: false,
       abstract: false,
       templateUrl: 'main/templates/login.html',
       controller: 'LoginCtrl as loginVm'
     })
     .state('main', {
       url: '/main',
+      cache: false,
       abstract: true,
       templateUrl: 'main/templates/menu.html',
       controller: 'MenuCtrl as menuVm'

@@ -29,14 +29,14 @@ angular.module('main')
         .then(function(response) {
             response = response.data;
             if (response.token) {
-                Mithril.chest('userWPToken', response.token);
-                Mithril.chest('userWPHeader', 'Bearer ' + response.token);
-                $http.defaults.headers.common['WP-Authoriser'] = Mithril.chest('userWPHeader');
+                Mithril.storage('userWPToken', response.token);
+                Mithril.storage('userWPHeader', 'Bearer ' + response.token);
+                $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
 
                 $state.go('main.dashboard');
             }
             else {
-                Mithril.chest('userWPToken', null);
+                Mithril.storage('userWPToken', null);
                 Icarus.hide();
                 Icarus.alert('Unable To Login', 'Could not validate credentials');
                 return false;
@@ -46,7 +46,7 @@ angular.module('main')
             error = error.data;
             Icarus.hide();
 
-            Mithril.chest('userWPToken', null);
+            Mithril.storage('userWPToken', null);
 
             Icarus.alert('Unable To Login', error.message);
             return false;

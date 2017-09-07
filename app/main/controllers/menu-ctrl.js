@@ -20,9 +20,7 @@
     var menuVm = this;
 
     // DEFINE MENU FUNCTIONS
-    menuVm.startUserData = startUserData;
     menuVm.logout = logout;
-    menuVm.amIUndefined = amIUndefined;
     menuVm.doRefresh = doRefresh;
     menuVm.serviceStatusIcon = serviceStatusIcon;
     menuVm.subDangerLevel = subDangerLevel;
@@ -33,6 +31,7 @@
     menuVm.updateUserMeta = updateUserMeta;
     menuVm.getSubDaysLeft = getSubDaysLeft;
     menuVm.updateServiceStatus = updateServiceStatus;
+    menuVm.togglePwdVisible = togglePwdVisible;
 
     // DEFINE PRODUCT FUNCTIONS
     menuVm.getAllProducts = getAllProducts;
@@ -42,38 +41,76 @@
     menuVm.getUnshippedOrders = getUnshippedOrders;
     menuVm.markOrderShipped = markOrderShipped;
 
-    if (menuVm.amIUndefined(Mithril.chest('userWPToken'))) {
-      Icarus.hide();
+    if (! Mithril.storage('userWPToken')) {
+      // FORCE LOGOUT
       menuVm.logout();
       return false;
     }
-
-    menuVm.startUserData();
-    menuVm.resetVariables();
-    var WooCommerce = API.WooCommerce();
-
-    // SETTINGS VARIABLES
-    menuVm.userSettings = {
-      stockTrigger: 3
-    };
-
-    if (Mithril.chest('userSettings')) {
-      menuVm.userSettings = Mithril.chest('userSettings');
+    else {
+      $log.log('Token check passed');
+      startUserData();
     }
 
-    // VARIABLES ARE SET - START LOADING
-    menuVm.doRefresh();
-
     // GENERIC FUNCTIONS
+    function startUserData() {
+      $log.log('Starting data collection');
+      menuVm.resetVariables();
+      $log.log('Variables reset');
 
-    function amIUndefined(item) {
-      if (item === null) {
-        return true;
+      if (Mithril.chest('userSettings')) {
+        menuVm.userSettings = Mithril.chest('userSettings');
+      }
+      else {
+        menuVm.userSettings = {
+          stockTrigger: 3
+        };
       }
 
-      if (item === undefined) {
-        return true;
-      }
+      MerchAPI.getUserMeta()
+      .then(function (resp) {
+        resp = resp.data;
+
+        Mithril.storage('userUrl', 'https://' + resp.site_url);
+        Mithril.storage('userKey', resp.con_key);
+        Mithril.storage('userSecret', resp.con_secret);
+        Mithril.storage('userLogo', resp.logo);
+        Mithril.storage('userId', resp.user_id);
+        Mithril.storage('userPushId', resp.push_user);
+
+        Mithril.storage('dataCache', true);
+
+        $log.log('User data stored');
+      })
+      .then(function() {
+        MerchAPI.getUserSub()
+        .then(function (resp) {
+          resp = resp.data;
+          Mithril.storage('subStarted', resp.sub_renewed);
+          Mithril.storage('subExpires', resp.sub_expires);
+          Mithril.storage('subDaysLeft', resp.sub_days);
+          Mithril.storage('subStatus', resp.status_text);
+
+          $log.log('Sub status stored');
+        });
+      })
+      .then(function() {
+        menuVm.WooCommerce = API.WooCommerce();
+        $log.log('WooCommerce defined; ', menuVm.WooCommerce);
+      })
+      .then(function() {
+        // If WooCommerce hasn't loaded, try sequence again
+        if (!angular.isObject(menuVm.WooCommerce)) {
+          startUserData();
+          return false;
+        }
+
+        menuVm.doRefresh();
+        $log.log('Refresh triggered');
+      })
+      .finally(function() {
+        $log.log('Final call');
+        Icarus.hide();
+      });
     }
 
     function doRefresh() {
@@ -87,37 +124,17 @@
 
       // Hides the spinner; keep last
       menuVm.getUnshippedOrders();
-
       $scope.$broadcast('scroll.refreshComplete');
     }
 
-    function startUserData() {
-      MerchAPI.getUserMeta()
-      .then(function (resp) {
-          resp = resp.data;
-
-          Mithril.storage('userUrl', 'https://' + resp.site_url);
-          Mithril.storage('userKey', resp.con_key);
-          Mithril.storage('userSecret', resp.con_secret);
-          Mithril.storage('userLogo', resp.logo);
-          Mithril.storage('userId', resp.user_id);
-
-          Mithril.storage('dataCache', false);
-
-          MerchAPI.getUserSub()
-          .then(function (resp) {
-            resp = resp.data;
-            Mithril.storage('subStarted', resp.sub_renewed);
-            Mithril.storage('subExpires', resp.sub_expires);
-            Mithril.storage('subDaysLeft', resp.sub_days);
-            Mithril.storage('subStatus', resp.status_text);
-          });
-      });
+    function logout() {
+      Mithril.destroy('userWPToken');
+      Mithril.destroy('userWPHeader');
+      $state.go('login');
     }
 
-    function logout() {
-      Mithril.wipeout();
-      $state.go('login');
+    function togglePwdVisible() {
+      menuVm.showPassword = menuVm.showPassword ? false : true;
     }
 
     function getSubDaysLeft() {
@@ -224,7 +241,7 @@
     // PRODUCTS
 
     function getAllProducts() {
-      WooCommerce.get('products', function (err, data, res) {
+      menuVm.WooCommerce.get('products', function (err, data, res) {
         var products = JSON.parse(res);
         Mithril.chest('allProducts', products);
 
@@ -243,7 +260,7 @@
     }
 
     function getProductVariants(id) {
-      WooCommerce.get('products/' + id + '/variations', function(err, data, res) {
+      menuVm.WooCommerce.get('products/' + id + '/variations', function(err, data, res) {
         menuVm.productVariants[id] = JSON.parse(res);
       });
     }
@@ -306,7 +323,7 @@
     // ORDERS
 
     function getUnshippedOrders() {
-      WooCommerce.get('orders?status=processing', function (err, data, res) {
+      menuVm.WooCommerce.get('orders?status=processing', function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
         Icarus.hide();
@@ -320,7 +337,7 @@
           status: 'completed'
       };
 
-      WooCommerce.put('orders/' + id, completion, function (err, data, res) {
+      menuVm.WooCommerce.put('orders/' + id, completion, function (err, data, res) {
         if (res) {
           Icarus.hide();
           Icarus.saved('Order shipped!', 'ion-thumbsup', true, 2000);

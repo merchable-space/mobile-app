@@ -179,10 +179,15 @@
          */
         function storage(key, value) {
             if (!value) {
-                return armoury[key];
+                if (key in armoury) {
+                    return armoury[key];
+                }
+                else {
+                    return false;
+                }
             }
             else {
-                return armoury[key] = value;
+                return armoury[key] = value ;
             }
         }
 
@@ -205,7 +210,12 @@
             }
 
             if (!value) {
-                return cachedData[key];
+                if (key in cachedData) {
+                    return cachedData[key];
+                }
+                else {
+                    return false;
+                }
             }
             else {
                 cachedData[key] = value;

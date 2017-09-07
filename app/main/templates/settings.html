@@ -16,6 +16,22 @@
                     Save Settings
                 </button>
             </ion-item>
+            <ion-item class="item-divider item-dark">
+                Notifications
+            </ion-item>
+            <ion-item class="item-divider">
+                Push Notifications
+            </ion-item>
+            <ion-item>
+                <button ng-disabled="menuVm.pushNotifsEnabled" class="button button-block button-royal" ng-click="menuVm.registerPush()">
+                    Register Device
+                </button>
+            </ion-item>
+            <ion-item>
+                <button ng-disabled="!menuVm.pushNotifsEnabled" class="button button-block button-royal" ng-click="menuVm.registerPush()">
+                    Unregister Device
+                </button>
+            </ion-item>
         </ion-list>
     </ion-content>
 </ion-view>
