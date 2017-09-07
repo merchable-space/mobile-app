@@ -18,6 +18,12 @@ angular.module('main', [
     }
   };
 })
+.run(function($ionicPlatform, $injector) {
+  $ionicPlatform.ready(function() {
+      var Icarus = $injector.get('Icarus');
+      Icarus.spinner();
+  });
+})
 .config(function ($stateProvider, $urlRouterProvider, $localStorageProvider, $httpProvider) {
 
   // LOCAL STORAGE

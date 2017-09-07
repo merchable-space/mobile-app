@@ -53,11 +53,15 @@ angular.module('main')
     }
 
     function getUserMeta() {
+        var user = Mithril.storage('userCredentials');
+        user = user.username;
+
         var req = {
             method: 'GET',
             url: 'http://api.merchable.space/get_user_meta.php',
             headers: {
-              'app_key': 'xPvttsjSyhgJrpDs2nxVciMwqxKsJLAN'
+              'username': user,
+              'api_key': 'jICLzvKFaCCUFfrGqer9'
             }
         };
 
@@ -65,11 +69,14 @@ angular.module('main')
     }
 
     function getUserSub() {
+        var user = Mithril.storage('userId');
+
         var req = {
             method: 'GET',
             url: 'http://api.merchable.space/get_user_sub.php',
             headers: {
-              'app_key': 'xPvttsjSyhgJrpDs2nxVciMwqxKsJLAN'
+                'user_id': user,
+                'api_key': 'jICLzvKFaCCUFfrGqer9'
             }
         };
 

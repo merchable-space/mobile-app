@@ -30,6 +30,7 @@
     menuVm.saveUserSettings = saveUserSettings;
     menuVm.resetVariables = resetVariables;
     menuVm.updateUserMeta = updateUserMeta;
+    menuVm.getSubDaysLeft = getSubDaysLeft;
 
     // DEFINE PRODUCT FUNCTIONS
     menuVm.getAllProducts = getAllProducts;
@@ -79,14 +80,14 @@
       menuVm.getAllProducts();
       menuVm.returnAllVariantStock();
       menuVm.getStockWarnings();
+
+      // Hides the spinner; keep last
       menuVm.getUnshippedOrders();
 
       $scope.$broadcast('scroll.refreshComplete');
-      Icarus.hide();
     }
 
     function startUserData() {
-      Icarus.spinner();
       MerchAPI.getUserMeta()
       .then(function (resp) {
           resp = resp.data;
@@ -95,14 +96,34 @@
           Mithril.storage('userKey', resp.con_key);
           Mithril.storage('userSecret', resp.con_secret);
           Mithril.storage('userLogo', resp.logo);
+          Mithril.storage('userId', resp.user_id);
 
           Mithril.storage('dataCache', false);
+
+          MerchAPI.getUserSub()
+          .then(function (resp) {
+            resp = resp.data;
+            Mithril.storage('subStarted', resp.sub_renewed);
+            Mithril.storage('subExpires', resp.sub_expires);
+            Mithril.storage('subStatus', resp.status_text);
+          });
       });
     }
 
     function logout() {
       Mithril.wipeout();
       $state.go('login');
+    }
+
+    function getSubDaysLeft() {
+      var subStarted = new Date(Mithril.storage('subStarted'));
+      var subExpires = new Date(Mithril.storage('subExpires'));
+      var dayDiff = (subExpires - subStarted)  / 1000 / 60 / 60 / 24;
+
+      menuVm.subStatusMessage = Mithril.storage('subStatus');
+      menuVm.subStartedDate = subStarted.toDateString();
+      menuVm.subExpiresDate = subExpires.toDateString();
+      menuVm.subExpiryDays = Math.round(dayDiff);
     }
 
     function subDangerIcon() {
@@ -129,15 +150,17 @@
       }
 
       if (menuVm.subExpiryDays > 10) {
-        return false;
+        return 'green-text';
       }
     }
 
     function subDangerText() {
-      if (menuVm.subExpiryDays <= 0) {
-        var dayTerm = Math.abs(menuVm.subExpiryDays) === 1 ? ' day' : ' days';
+      var dayTerm = (menuVm.subExpiryDays === 1 ? ' day' : ' days');
 
-        return 'Expired ' + Math.abs(menuVm.subExpiryDays) + dayTerm + ' ago';
+      if (menuVm.subExpiryDays <= 0) {
+
+
+        return 'Expired ' + menuVm.subExpiryDays + dayTerm + ' ago';
       }
       else {
         return 'Expires in ' + menuVm.subExpiryDays + dayTerm;
@@ -165,10 +188,10 @@
       menuVm.lowStockProducts = 0;
       menuVm.noStockProducts = 0;
       menuVm.subExpiryDays = 0;
-      menuVm.subDangerStatus = 'OK!';
     }
 
     function updateUserMeta() {
+      menuVm.getSubDaysLeft();
       menuVm.logoImageBase = Mithril.storage('userLogo');
     }
 
@@ -260,6 +283,7 @@
       WooCommerce.get('orders?status=processing', function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
+        Icarus.hide();
       });
       $scope.$broadcast('scroll.refreshComplete');
     }
