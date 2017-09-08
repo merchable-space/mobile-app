@@ -66,6 +66,14 @@ angular.module('main', [
           }
         }
       })
+      .state('main.stockUpdate', {
+        url: '/stock-update',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/stock-update.html'
+          }
+        }
+      })
       .state('main.warnings', {
         url: '/warnings',
         views: {

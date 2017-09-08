@@ -64,7 +64,8 @@
             pandora: pandora,
             destroy: destroy,
             wipeout: wipeout,
-            blitz: blitz
+            blitz: blitz,
+            empty: empty
         };
         return functionList;
 
@@ -269,6 +270,16 @@
          */
         function blitz() {
             armoury.$reset();
+        }
+
+        /*
+         * Check whether an object is empty - undefined, null or ''
+         *
+         * INPUT: variable
+         * RETURNS: bool
+         */
+        function empty(item) {
+            return angular.isUndefined(item) || item === null || item === '';
         }
     }
 })();

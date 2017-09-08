@@ -1,5 +1,12 @@
 <ion-view view-title="All Products">
     <ion-content>
+        <ion-refresher on-refresh="menuVm.getAllProducts()"
+        pulling-text="Pull to refresh..."
+        pulling-icon="ion-arrow-down-c"
+        refreshing-text="Loading..."
+        spinner="lines">
+        </ion-refresher>
+
         <div class="card" ng-repeat="product in menuVm.productList">
             <ion-list>
                 <ion-item class="item-divider">
@@ -40,7 +47,7 @@
                                 Stock
                             </td>
                         </tr>
-                        <tr ng-repeat="variant in menuVm.productVariants[product.id]" ng-class="{'amber-text' : variant.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text' : variant.stock_quantity == 0}">
+                        <tr ng-repeat="variant in menuVm.productVariants[product.id]" ng-class="{'amber-text' : variant.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : variant.stock_quantity == 0}">
                             <td>
                                 {{variant.sku}}
                             </td>
@@ -52,6 +59,10 @@
                             </td>
                         </tr>
                     </table>
+                </ion-item>
+                <ion-item class="item-divider item-icon-right" ng-click="menuVm.goToVariantStock(product.id)">
+                    Update Stock
+                    <i class="icon ion-android-create"></i>
                 </ion-item>
             </ion-list>
         </div>

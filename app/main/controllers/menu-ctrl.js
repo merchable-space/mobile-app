@@ -6,6 +6,7 @@
 
   function MenuCtrl (
     $state,
+    $stateParams,
     $scope,
     $rootScope,
     $cordovaDevice,
@@ -40,6 +41,8 @@
     menuVm.getStockWarnings = getStockWarnings;
     menuVm.getUnshippedOrders = getUnshippedOrders;
     menuVm.markOrderShipped = markOrderShipped;
+    menuVm.goToVariantStock = goToVariantStock;
+    menuVm.updateAllStock = updateAllStock;
 
     if (! Mithril.storage('userWPToken')) {
       // FORCE LOGOUT
@@ -200,7 +203,7 @@
 
     function saveUserSettings() {
       Mithril.chest('userSettings', menuVm.userSettings);
-      Icarus.saved('Settings saved', 'ion-checkmark-circled', true, 2000);
+      Icarus.saved('Settings saved', 'ion-thumbsup', true, 2000);
     }
 
     function getArrayLength(array) {
@@ -256,6 +259,7 @@
         });
 
         Mithril.chest('allVariants', menuVm.productVariants);
+        $scope.$broadcast('scroll.refreshComplete');
       });
     }
 
@@ -344,6 +348,40 @@
           menuVm.getUnshippedOrders();
         }
       });
+    }
+
+    function goToVariantStock(product) {
+      menuVm.currentProductStock = product;
+      menuVm.stockToUpdate = {};
+
+      angular.forEach(menuVm.productVariants[product], function(variant) {
+        menuVm.stockToUpdate[variant.id] = variant.stock_quantity;
+      });
+
+      $state.go('main.stockUpdate');
+    }
+
+    function updateAllStock() {
+      Icarus.spinner();
+      angular.forEach(menuVm.stockToUpdate, function(stock, id) {
+
+        if (Mithril.empty(stock) || (!angular.isNumber(stock))) {
+          Icarus.alert('Error Updating Stock', 'Invalid value entered')
+          return false;
+        }
+
+        var stockObj = {
+          stock_quantity: stock
+        };
+
+        menuVm.WooCommerce.put('products/' + menuVm.currentProductStock + '/variations/' + id + '/', stockObj, function (err, data, res) {})
+      });
+
+      Icarus.hide();
+      Icarus.saved('Stock updated!', 'ion-thumbsup', true, 2000);
+      menuVm.getAllProducts();
+
+      $state.go('main.stock');
     }
   }
 })();
