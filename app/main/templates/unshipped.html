@@ -92,6 +92,18 @@
                             </tr>
                         </table>
                     </ion-item>
+                    <ion-item class="item-divider">
+                        Shipping Company
+                    </ion-item>
+                    <ion-item>
+                        <input type="text" ng-model="menuVm.trackingOrders[order.id]['company']" autocapitalize="none">
+                    </ion-item>
+                    <ion-item class="item-divider">
+                        Tracking Reference
+                    </ion-item>
+                    <ion-item>
+                        <input type="text" ng-model="menuVm.trackingOrders[order.id]['reference']" autocapitalize="none">
+                    </ion-item>
                     <ion-item>
                         <button class="button button-block button-royal icon-left ion-paper-airplane" ng-click="menuVm.markOrderShipped(order.id)">
                             Mark As Dispatched

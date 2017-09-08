@@ -50,15 +50,12 @@
       return false;
     }
     else {
-      $log.log('Token check passed');
       startUserData();
     }
 
     // GENERIC FUNCTIONS
     function startUserData() {
-      $log.log('Starting data collection');
       menuVm.resetVariables();
-      $log.log('Variables reset');
 
       if (Mithril.chest('userSettings')) {
         menuVm.userSettings = Mithril.chest('userSettings');
@@ -81,8 +78,6 @@
         Mithril.storage('userPushId', resp.push_user);
 
         Mithril.storage('dataCache', true);
-
-        $log.log('User data stored');
       })
       .then(function() {
         MerchAPI.getUserSub()
@@ -92,13 +87,10 @@
           Mithril.storage('subExpires', resp.sub_expires);
           Mithril.storage('subDaysLeft', resp.sub_days);
           Mithril.storage('subStatus', resp.status_text);
-
-          $log.log('Sub status stored');
         });
       })
       .then(function() {
         menuVm.WooCommerce = API.WooCommerce();
-        $log.log('WooCommerce defined; ', menuVm.WooCommerce);
       })
       .then(function() {
         // If WooCommerce hasn't loaded, try sequence again
@@ -108,10 +100,8 @@
         }
 
         menuVm.doRefresh();
-        $log.log('Refresh triggered');
       })
       .finally(function() {
-        $log.log('Final call');
         Icarus.hide();
       });
     }
@@ -222,6 +212,7 @@
       menuVm.lowStockProducts = 0;
       menuVm.noStockProducts = 0;
       menuVm.subExpiryDays = 0;
+      menuVm.trackingOrders = {};
     }
 
     function updateUserMeta() {
@@ -338,14 +329,42 @@
     function markOrderShipped(id) {
       Icarus.spinner();
       var completion = {
-          status: 'completed'
+          status: 'completed',
       };
+
+      var trackingInfo = menuVm.trackingOrders[id] || null;
+
+      if (trackingInfo) {
+        var noteDetails;
+
+        if (trackingInfo['reference'] && trackingInfo['company']) {
+          noteDetails = 'Your order is on the way! It is being delivered by ' + trackingInfo['company'] + ' and has a tracking reference of ' + trackingInfo['reference'] + '.';
+        }
+
+        if (!trackingInfo['reference'] && trackingInfo['company']) {
+          noteDetails = 'Your order is on the way! It is being delivered by ' + trackingInfo['company'] + '.';
+        }
+
+        if (trackingInfo['reference'] && !trackingInfo['company']) {
+          Icarus.hide();
+          Icarus.alert('Cannot Dispatch Order', 'Please include the shipping company if you are adding a tracking reference!');
+          return false;
+        }
+
+        var trackNote = {
+          note: noteDetails,
+          customer_note: true
+        };
+
+        menuVm.WooCommerce.post('orders/' + id + '/notes', trackNote, function(err, data, res) {});
+      }
 
       menuVm.WooCommerce.put('orders/' + id, completion, function (err, data, res) {
         if (res) {
           Icarus.hide();
           Icarus.saved('Order shipped!', 'ion-thumbsup', true, 2000);
           menuVm.getUnshippedOrders();
+          menuVm.trackingOrders.id = null;
         }
       });
     }
@@ -366,7 +385,7 @@
       angular.forEach(menuVm.stockToUpdate, function(stock, id) {
 
         if (Mithril.empty(stock) || (!angular.isNumber(stock))) {
-          Icarus.alert('Error Updating Stock', 'Invalid value entered')
+          Icarus.alert('Error Updating Stock', 'Invalid value entered');
           return false;
         }
 
@@ -374,7 +393,7 @@
           stock_quantity: stock
         };
 
-        menuVm.WooCommerce.put('products/' + menuVm.currentProductStock + '/variations/' + id + '/', stockObj, function (err, data, res) {})
+        menuVm.WooCommerce.put('products/' + menuVm.currentProductStock + '/variations/' + id + '/', stockObj, function (err, data, res) {});
       });
 
       Icarus.hide();
