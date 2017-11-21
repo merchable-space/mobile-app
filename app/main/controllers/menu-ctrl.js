@@ -24,24 +24,22 @@
     menuVm.logout = logout;
     menuVm.doRefresh = doRefresh;
     menuVm.serviceStatusIcon = serviceStatusIcon;
-    menuVm.subDangerLevel = subDangerLevel;
-    menuVm.subDangerIcon = subDangerIcon;
-    menuVm.subDangerText = subDangerText;
     menuVm.saveUserSettings = saveUserSettings;
     menuVm.resetVariables = resetVariables;
     menuVm.updateUserMeta = updateUserMeta;
-    menuVm.getSubDaysLeft = getSubDaysLeft;
     menuVm.updateServiceStatus = updateServiceStatus;
     menuVm.togglePwdVisible = togglePwdVisible;
 
     // DEFINE PRODUCT FUNCTIONS
     menuVm.getAllProducts = getAllProducts;
+    menuVm.getProductSingle = getProductSingle;
     menuVm.getProductVariants = getProductVariants;
     menuVm.returnAllVariantStock = returnAllVariantStock;
     menuVm.getStockWarnings = getStockWarnings;
     menuVm.getUnshippedOrders = getUnshippedOrders;
     menuVm.markOrderShipped = markOrderShipped;
     menuVm.goToVariantStock = goToVariantStock;
+    menuVm.goToSingleStock = goToSingleStock;
     menuVm.updateAllStock = updateAllStock;
 
     if (! Mithril.storage('userWPToken')) {
@@ -66,28 +64,19 @@
         };
       }
 
-      MerchAPI.getUserMeta()
+      MerchAPI.getSiteMeta()
       .then(function (resp) {
         resp = resp.data;
 
-        Mithril.storage('userUrl', 'https://' + resp.site_url);
+        Mithril.storage('dataCache', true);
+        Mithril.storage('userLogo', resp.logo);
         Mithril.storage('userKey', resp.con_key);
         Mithril.storage('userSecret', resp.con_secret);
-        Mithril.storage('userLogo', resp.logo);
-        Mithril.storage('userId', resp.user_id);
-        Mithril.storage('userPushId', resp.push_user);
+        Mithril.storage('userSubExpires', resp.expires);
+        Mithril.storage('userSubType', resp.sub_type);
 
-        Mithril.storage('dataCache', true);
-      })
-      .then(function() {
-        MerchAPI.getUserSub()
-        .then(function (resp) {
-          resp = resp.data;
-          Mithril.storage('subStarted', resp.sub_renewed);
-          Mithril.storage('subExpires', resp.sub_expires);
-          Mithril.storage('subDaysLeft', resp.sub_days);
-          Mithril.storage('subStatus', resp.status_text);
-        });
+        menuVm.subExpiry = resp.expires;
+        menuVm.subType = resp.sub_type;
       })
       .then(function() {
         menuVm.WooCommerce = API.WooCommerce();
@@ -130,14 +119,6 @@
       menuVm.showPassword = menuVm.showPassword ? false : true;
     }
 
-    function getSubDaysLeft() {
-      menuVm.subStartedDate = Mithril.storage('subStarted');
-      menuVm.subExpiresDate = Mithril.storage('subExpires');
-
-      menuVm.subStatusMessage = Mithril.storage('subStatus');
-      menuVm.subExpiryDays = Math.round(Mithril.storage('subDaysLeft'));
-    }
-
     function serviceStatusIcon(number) {
       number = Math.round(number);
       switch (number) {
@@ -147,47 +128,6 @@
           return 'ion-alert-circled amber-text';
         case 2:
           return 'ion-close-circled red-text';
-      }
-    }
-
-    function subDangerIcon() {
-      if (menuVm.subExpiryDays <= 0) {
-        return 'ion-close-circled';
-      }
-
-      if (menuVm.subExpiryDays <= 10) {
-        return 'ion-alert-circled';
-      }
-
-      if (menuVm.subExpiryDays > 10) {
-        return 'ion-checkmark-circled';
-      }
-    }
-
-    function subDangerLevel() {
-      if (menuVm.subExpiryDays <= 0) {
-        return 'red-text';
-      }
-
-      if (menuVm.subExpiryDays <= 10) {
-        return 'amber-text';
-      }
-
-      if (menuVm.subExpiryDays > 10) {
-        return 'green-text';
-      }
-    }
-
-    function subDangerText() {
-      var dayTerm = (menuVm.subExpiryDays === 1 ? ' day' : ' days');
-
-      if (menuVm.subExpiryDays <= 0) {
-
-
-        return 'Expired ' + menuVm.subExpiryDays + dayTerm + ' ago';
-      }
-      else {
-        return 'Expires in ' + menuVm.subExpiryDays + dayTerm;
       }
     }
 
@@ -211,12 +151,10 @@
       menuVm.unshippedProducts = getArrayLength(Mithril.chest('unshippedOrders'));
       menuVm.lowStockProducts = 0;
       menuVm.noStockProducts = 0;
-      menuVm.subExpiryDays = 0;
       menuVm.trackingOrders = {};
     }
 
     function updateUserMeta() {
-      menuVm.getSubDaysLeft();
       menuVm.logoImageBase = Mithril.storage('userLogo');
     }
 
@@ -244,6 +182,11 @@
 
         angular.forEach(products, function(product) {
           var prodId = product.id;
+
+          if (product.type === 'simple') {
+            menuVm.getProductSingle(prodId);
+          }
+
           if (product.type === 'variable') {
             menuVm.getProductVariants(prodId);
           }
@@ -251,6 +194,12 @@
 
         Mithril.chest('allVariants', menuVm.productVariants);
         $scope.$broadcast('scroll.refreshComplete');
+      });
+    }
+
+    function getProductSingle(id) {
+      menuVm.WooCommerce.get('products/' + id, function(err, data, res) {
+        menuVm.productVariants[id] = JSON.parse(res);
       });
     }
 
@@ -281,7 +230,9 @@
 
       angular.forEach(variantList, function(variant) {
         angular.forEach(variant, function(variantSub) {
-          variantStock[variantSub.id] = variantSub.stock_quantity;
+          if (variantSub !== null) {
+            variantStock[variantSub.id] = variantSub.stock_quantity;
+          }
         });
       });
 
@@ -367,6 +318,18 @@
           menuVm.trackingOrders.id = null;
         }
       });
+    }
+
+    function goToSingleStock(product) {
+      menuVm.currentProductStock = product;
+      menuVm.stockToUpdate = {};
+
+      console.log(menuVm.productVariants);
+
+      var single = menuVm.productVariants[product];
+      menuVm.stockToUpdate[single.id] = single.stock_quantity;
+
+      $state.go('main.stockUpdate');
     }
 
     function goToVariantStock(product) {

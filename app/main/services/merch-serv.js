@@ -10,6 +10,7 @@ angular.module('main')
 
     var functions = {
         authWordpressUser: authWordpressUser,
+        getSiteMeta: getSiteMeta,
         getUserMeta: getUserMeta,
         getUserSub: getUserSub,
         getServiceStatus: getServiceStatus
@@ -22,6 +23,9 @@ angular.module('main')
         if (user.remember_me) {
             Mithril.storage('userCredentials', user);
         }
+
+        Mithril.storage('userStore', user.store);
+
         return $http.post('https://' + user.store + '.merchable.space/wp-json/jwt-auth/v1/token', {
             username: user.username,
             password: user.password
@@ -53,13 +57,28 @@ angular.module('main')
         });
     }
 
+    function getSiteMeta() {
+        var store = Mithril.storage('userStore');
+
+        var req = {
+            method: 'GET',
+            url: 'https://api.merchable.space/get_site_meta.php',
+            headers: {
+              'site': store,
+              'api_key': 'jICLzvKFaCCUFfrGqer9'
+            }
+        };
+
+        return $http(req);
+    }
+
     function getUserMeta() {
         var user = Mithril.storage('userCredentials');
         user = user.username;
 
         var req = {
             method: 'GET',
-            url: 'http://api.merchable.space/get_user_meta.php',
+            url: 'https://api.merchable.space/get_user_meta.php',
             headers: {
               'username': user,
               'api_key': 'jICLzvKFaCCUFfrGqer9'
@@ -74,7 +93,7 @@ angular.module('main')
 
         var req = {
             method: 'GET',
-            url: 'http://api.merchable.space/get_user_sub.php',
+            url: 'https://api.merchable.space/get_user_sub.php',
             headers: {
                 'user_id': user,
                 'api_key': 'jICLzvKFaCCUFfrGqer9'
@@ -87,7 +106,7 @@ angular.module('main')
     function getServiceStatus() {
         var req = {
             method: 'GET',
-            url: 'http://api.merchable.space/get_service_status.php',
+            url: 'https://api.merchable.space/get_service_status.php',
             headers: {
                 'api_key': 'jICLzvKFaCCUFfrGqer9'
             }

@@ -76,3 +76,20 @@ $ionicons-font-path: "../assets/fonts" !default;
 .loading > p {
     margin: 0;
 }
+
+.spinner-rainbow svg {
+    animation-name: rainbow;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes rainbow {
+    12.5%   {stroke: #CD0A0C;}
+    25%     {stroke: #D78818;}
+    37.5%   {stroke: #ebeb11;}
+    50%     {stroke: #26A710;}
+    62.5%   {stroke: #1118B3;}
+    75%     {stroke: #8217BF;}
+    87.5%   {stroke: #B30CB6;}
+    100%    {stroke: #CD0A0C;}
+}

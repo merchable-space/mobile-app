@@ -13,7 +13,7 @@
             WooCommerce: function() {
                 Icarus.spinner();
                 var Woocommerce = new WoocommerceAPI({
-                    url: Mithril.storage('userUrl'),
+                    url: 'https://' + Mithril.storage('userStore') + '.merchable.space',
                     consumerKey: Mithril.storage('userKey'),
                     consumerSecret: Mithril.storage('userSecret'),
                     wpAPI: true,

@@ -246,7 +246,7 @@
             }
 
             if (colour === undefined) {
-                colour = 'royal';
+                colour = 'rainbow';
             }
 
             if (dimmer === undefined) {
