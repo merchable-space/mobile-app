@@ -178,6 +178,7 @@
         Mithril.chest('allProducts', products);
 
         menuVm.productList = products;
+        menuVm.productSingles = {};
         menuVm.productVariants = {};
 
         angular.forEach(products, function(product) {
@@ -199,7 +200,7 @@
 
     function getProductSingle(id) {
       menuVm.WooCommerce.get('products/' + id, function(err, data, res) {
-        menuVm.productVariants[id] = JSON.parse(res);
+        menuVm.productSingles[id] = JSON.parse(res);
       });
     }
 
@@ -323,11 +324,11 @@
     function goToSingleStock(product) {
       menuVm.currentProductStock = product;
       menuVm.stockToUpdate = {};
+      menuVm.stockUpdating = 'single';
 
-      console.log(menuVm.productVariants);
-
-      var single = menuVm.productVariants[product];
+      var single = menuVm.productSingles[product];
       menuVm.stockToUpdate[single.id] = single.stock_quantity;
+      menuVm.currentlyStocking = single;
 
       $state.go('main.stockUpdate');
     }
@@ -335,6 +336,7 @@
     function goToVariantStock(product) {
       menuVm.currentProductStock = product;
       menuVm.stockToUpdate = {};
+      menuVm.stockUpdating = 'variant';
 
       angular.forEach(menuVm.productVariants[product], function(variant) {
         menuVm.stockToUpdate[variant.id] = variant.stock_quantity;

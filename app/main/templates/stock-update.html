@@ -2,7 +2,15 @@
     <ion-content>
         <div class="card">
             <ion-list>
-                <div ng-repeat="variant in menuVm.productVariants[menuVm.currentProductStock]">
+                <div ng-if="menuVm.stockUpdating === 'single'">
+                    <ion-item class="item-divider">
+                        {{menuVm.currentlyStocking.sku}}
+                    </ion-item>
+                    <ion-item>
+                        <input type="number" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id]" required="required" autocapitalize="none">
+                    </ion-item>
+                </div>
+                <div ng-if="menuVm.stockUpdating === 'variant'" ng-repeat="variant in menuVm.productVariants[menuVm.currentProductStock]">
                     <ion-item class="item-divider">
                         {{variant.sku}}
                     </ion-item>
