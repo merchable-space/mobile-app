@@ -37,6 +37,7 @@
     menuVm.returnAllVariantStock = returnAllVariantStock;
     menuVm.getStockWarnings = getStockWarnings;
     menuVm.getUnshippedOrders = getUnshippedOrders;
+    menuVm.swapUnshippedSorting = swapUnshippedSorting;
     menuVm.markOrderShipped = markOrderShipped;
     menuVm.goToVariantStock = goToVariantStock;
     menuVm.goToSingleStock = goToSingleStock;
@@ -152,6 +153,7 @@
       menuVm.lowStockProducts = 0;
       menuVm.noStockProducts = 0;
       menuVm.trackingOrders = {};
+      menuVm.sortUnshippedOrders = 'asc';
     }
 
     function updateUserMeta() {
@@ -269,8 +271,17 @@
 
     // ORDERS
 
+    function swapUnshippedSorting() {
+      if (menuVm.sortUnshippedOrders === 'asc') {
+        menuVm.sortUnshippedOrders = 'desc';
+      }
+      else {
+        menuVm.sortUnshippedOrders = 'asc';
+      }
+    }
+
     function getUnshippedOrders() {
-      menuVm.WooCommerce.get('orders?status=processing&orderby=id&order=asc', function (err, data, res) {
+      menuVm.WooCommerce.get('orders?status=processing&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
         Icarus.hide();

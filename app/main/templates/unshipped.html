@@ -7,6 +7,18 @@
             spinner="lines">
             </ion-refresher>
 
+            <div class="card">
+                <ion-item class="item-icon-right" ng-click="menuVm.swapUnshippedSorting()">
+                    <span ng-if="menuVm.sortUnshippedOrders === 'asc'">
+                        Showing oldest 10 first
+                    </span>
+                    <span ng-if="menuVm.sortUnshippedOrders === 'desc'">
+                        Showing newest 10 first
+                    </span>
+                    <i class="icon" ng-class="menuVm.sortUnshippedOrders === 'asc' : 'ion-android-funnel rotate-90' ? 'ion-android-funnel'"></i>
+                </ion-item>
+            </div>
+
             <div class="card" ng-if="menuVm.unshippedOrders.length < 1">
                 <ion-item class="item-icon-left">
                     <i class="icon ion-android-happy green-text"></i>

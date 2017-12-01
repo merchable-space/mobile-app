@@ -93,3 +93,8 @@ $ionicons-font-path: "../assets/fonts" !default;
     87.5%   {stroke: #B30CB6;}
     100%    {stroke: #CD0A0C;}
 }
+
+.rotate-90 {
+    display: inline-block;
+    transform: rotate(90deg);
+  }
