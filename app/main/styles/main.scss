@@ -97,4 +97,9 @@ $ionicons-font-path: "../assets/fonts" !default;
 .rotate-90 {
     display: inline-block;
     transform: rotate(90deg);
-  }
+}
+
+.rotate-180 {
+    display: inline-block;
+    transform: rotate(180deg);
+}

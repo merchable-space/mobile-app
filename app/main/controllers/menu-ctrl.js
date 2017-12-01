@@ -154,6 +154,7 @@
       menuVm.noStockProducts = 0;
       menuVm.trackingOrders = {};
       menuVm.sortUnshippedOrders = 'asc';
+      menuVm.sortUnshippedClass = 'ion-android-funnel rotate-180';
     }
 
     function updateUserMeta() {
@@ -274,14 +275,19 @@
     function swapUnshippedSorting() {
       if (menuVm.sortUnshippedOrders === 'asc') {
         menuVm.sortUnshippedOrders = 'desc';
+        menuVm.sortUnshippedClass = 'ion-android-funnel';
       }
       else {
         menuVm.sortUnshippedOrders = 'asc';
+        menuVm.sortUnshippedClass = 'ion-android-funnel rotate-180';
       }
+
+      Icarus.spinner();
+      menuVm.getUnshippedOrders();
     }
 
     function getUnshippedOrders() {
-      menuVm.WooCommerce.get('orders?status=processing&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
+      menuVm.WooCommerce.get('orders?status=processing&per_page=15&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
         Icarus.hide();

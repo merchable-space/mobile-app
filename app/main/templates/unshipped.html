@@ -7,15 +7,15 @@
             spinner="lines">
             </ion-refresher>
 
-            <div class="card">
+            <div class="card" ng-if="menuVm.unshippedOrders.length > 1">
                 <ion-item class="item-icon-right" ng-click="menuVm.swapUnshippedSorting()">
                     <span ng-if="menuVm.sortUnshippedOrders === 'asc'">
-                        Showing oldest 10 first
+                        Showing oldest 15 first
                     </span>
                     <span ng-if="menuVm.sortUnshippedOrders === 'desc'">
-                        Showing newest 10 first
+                        Showing newest 15 first
                     </span>
-                    <i class="icon" ng-class="menuVm.sortUnshippedOrders === 'asc' : 'ion-android-funnel rotate-90' ? 'ion-android-funnel'"></i>
+                    <i class="icon" ng-class="menuVm.sortUnshippedClass"></i>
                 </ion-item>
             </div>
 
