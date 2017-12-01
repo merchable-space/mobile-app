@@ -270,7 +270,7 @@
     // ORDERS
 
     function getUnshippedOrders() {
-      menuVm.WooCommerce.get('orders?status=processing', function (err, data, res) {
+      menuVm.WooCommerce.get('orders?status=processing&orderby=id&order=asc', function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
         Icarus.hide();
