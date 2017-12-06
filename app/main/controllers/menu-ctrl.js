@@ -42,6 +42,7 @@
     menuVm.goToVariantStock = goToVariantStock;
     menuVm.goToSingleStock = goToSingleStock;
     menuVm.updateAllStock = updateAllStock;
+    menuVm.serviceStatusLink = serviceStatusLink;
 
     if (! Mithril.storage('userWPToken')) {
       // FORCE LOGOUT
@@ -172,6 +173,10 @@
       });
 
       $scope.$broadcast('scroll.refreshComplete');
+    }
+
+    function serviceStatusLink(url) {
+      cordova.InAppBrowser.open(url, '_blank');
     }
 
     // PRODUCTS

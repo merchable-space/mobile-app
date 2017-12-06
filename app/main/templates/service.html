@@ -12,11 +12,12 @@
                 <ion-item class="item-divider item-dark">
                         {{status.updated_on | date:"dd MMMM yyyy HH:mm"}}
                 </ion-item>
-                <ion-item class="item-icon-left">
+                <ion-item class="item-icon-left" ng-class="status.status_attachment ? 'item-icon-right'">
                     <i class="icon status-icon" ng-class="menuVm.serviceStatusIcon(status.status_code)"></i>
                     <span class="dashboard-text">
                             {{status.status_text}}
                     </span>
+                    <i ng-if="status.status_attachment" class="icon typcn typcn-attachment-outline" ng-class="menuVm.serviceStatusLink(status.status_attachment)"></i>
                 </ion-item>
             </ion-list>
         </div>
