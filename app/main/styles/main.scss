@@ -24,6 +24,17 @@ $ionicons-font-path: "../assets/fonts" !default;
 // added via yo m-ionic:component subgenerator
 @import '../components/mini/mini-component';
 
+@font-face {
+    font-family: 'typicons';
+    src: url("../assets/fonts/typicons.eot");
+    src: url("../assets/fonts/typicons.eot?#iefix") format('embedded-opentype'),
+         url("../assets/fonts/typicons.woff") format('woff'),
+         url("../assets/fonts/typicons.ttf") format('truetype'),
+         url("../assets/fonts/typicons.svg#typicons") format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 .dashboard-number {
     font-size: 2em;
     font-weight: 700;
@@ -95,16 +106,13 @@ $ionicons-font-path: "../assets/fonts" !default;
     transform: rotate(180deg);
 }
 
-.item-icon-left .icon {
+.item-icon-left .icon,
+.item-icon-right .icon {
     top: 6px;
 }
 
-.item-icon-right .icon.typcn-key,
-.item-icon-right .icon.typcn-key-outline, {
-    top: 5px;
-}
-
-.hide-password {
+.hide-password,
+.ghost {
     color: #cacaca;
 }
 

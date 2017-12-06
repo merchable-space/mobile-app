@@ -11,8 +11,18 @@
             <ion-item>
                 <input type="number" ng-model="menuVm.userSettings.stockTrigger" required="required" autocapitalize="none">
             </ion-item>
+            <ion-item class="item-divider item-dark">
+                Orders
+            </ion-item>
+            <ion-item class="item-divider">
+                Unshipped Orders Limit
+                <div class="item-hint">How many unshipped orders do you want to see at once?</div>
+            </ion-item>
             <ion-item>
-                <button class="button button-block button-royal" ng-click="menuVm.saveUserSettings()">
+                <input type="number" ng-model="menuVm.userSettings.unshippedCount" required="required" autocapitalize="none">
+            </ion-item>
+            <ion-item>
+                <button class="button button-block button-royal icon-left typcn typcn-tick" ng-click="menuVm.saveUserSettings()">
                     Save Settings
                 </button>
             </ion-item>

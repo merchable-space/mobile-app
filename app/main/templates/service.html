@@ -12,10 +12,8 @@
                 <ion-item class="item-divider item-dark">
                         {{status.updated_on | date:"dd MMMM yyyy HH:mm"}}
                 </ion-item>
-                <ion-item style="text-align: center;">
+                <ion-item class="item-icon-left">
                     <i class="icon status-icon" ng-class="menuVm.serviceStatusIcon(status.status_code)"></i>
-                </ion-item>
-                <ion-item>
                     <span class="dashboard-text">
                             {{status.status_text}}
                     </span>

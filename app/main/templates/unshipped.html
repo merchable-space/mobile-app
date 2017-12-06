@@ -8,20 +8,34 @@
             </ion-refresher>
 
             <div class="card" ng-if="menuVm.unshippedOrders.length > 1">
-                <ion-item class="item-icon-right" ng-click="menuVm.swapUnshippedSorting()">
+                <ion-item class="item-icon-left" ng-click="menuVm.swapUnshippedSorting()">
+                    <i class="icon" ng-class="menuVm.sortUnshippedClass"></i>
                     <span ng-if="menuVm.sortUnshippedOrders === 'asc'">
-                        Showing oldest 15 first
+                        Showing
+                        <span ng-if="menuVm.unshippedOrders.length >= 15">
+                            {{ menuVm.userSettings.unshippedCount }}
+                        </span>
+                        <span ng-if="menuVm.unshippedOrders.length < 15">
+                            {{ menuVm.unshippedOrders.length }}
+                        </span>
+                         orders, oldest first
                     </span>
                     <span ng-if="menuVm.sortUnshippedOrders === 'desc'">
-                        Showing newest 15 first
+                        Showing
+                        <span ng-if="menuVm.unshippedOrders.length >= 15">
+                            {{ menuVm.userSettings.unshippedCount }}
+                        </span>
+                        <span ng-if="menuVm.unshippedOrders.length < 15">
+                            {{ menuVm.unshippedOrders.length }}
+                        </span>
+                            orders, newest first
                     </span>
-                    <i class="icon" ng-class="menuVm.sortUnshippedClass"></i>
                 </ion-item>
             </div>
 
             <div class="card" ng-if="menuVm.unshippedOrders.length < 1">
                 <ion-item class="item-icon-left">
-                    <i class="icon ion-android-happy green-text"></i>
+                    <i class="icon typcn typcn-thumbs-ok green-text"></i>
                     Nothing left to ship!
                 </ion-item>
             </div>
@@ -43,21 +57,24 @@
                         <div ng-if="order.shipping.city">{{order.shipping.city}}</div>
                         <div ng-if="order.shipping.state">{{order.shipping.state}}</div>
                         <div>{{order.shipping.postcode}}</div>
+                        <div ng-if="order.shipping.country">{{order.shipping.country}}</div>
+                        <div ng-if="order.billing.phone">&nbsp;</div>
+                        <div ng-if="order.billing.phone"><i class="icon typcn typcn-phone"></i>{{order.billing.phone}}</div>
                     </ion-item>
                     <ion-item class="item-divider">
-                        Items Purchased
+                        Order Details
                     </ion-item>
                     <ion-item>
                         <table class="clear-table">
-                            <tr style="font-weight: 600;border-bottom: 1px solid #888">
+                            <tr style="font-weight: 600; border-bottom: 1px solid rgb(131, 131, 131);">
                                 <td style="width:65%;">
                                     Item
                                 </td>
                                 <td style="text-align: right;">
-                                    Price
+                                    Qty
                                 </td>
                                 <td style="text-align: right;">
-                                    Qty
+                                    Price
                                 </td>
                             </tr>
                             <tr ng-repeat="item in order.line_items">
@@ -65,23 +82,19 @@
                                     {{item.name}}
                                 </td>
                                 <td style="text-align: right;">
-                                    {{item.price | number:2}}
+                                    {{item.quantity}}
                                 </td>
                                 <td style="text-align: right;">
-                                    {{item.quantity}}
+                                    {{item.price | number:2}}
                                 </td>
                             </tr>
                         </table>
-                    </ion-item>
-                    <ion-item class="item-divider">
-                        Totals
-                    </ion-item>
-                    <ion-item>
-                        <table class="clear-table">
+                        <table class="clear-table" style="margin-top: 20px;">
                             <tr>
                                 <td style="font-weight: 600;">
                                     Shipping
                                 </td>
+                                <td></td>
                                 <td style="text-align: right;">
                                     {{order.shipping_total}}
                                 </td>
@@ -90,15 +103,26 @@
                                 <td style="font-weight: 600;">
                                     Tax
                                 </td>
+                                <td></td>
                                 <td style="text-align: right;">
                                     {{order.total_tax}}
                                 </td>
                             </tr>
                             <tr>
                                 <td style="font-weight: 600;">
-                                    Order
+                                    Discounts
                                 </td>
+                                <td></td>
                                 <td style="text-align: right;">
+                                    - {{order.discount_total}}
+                                </td>
+                            </tr>
+                            <tr style="border-top: 1px solid rgb(131, 131, 131);">
+                                <td style="font-weight: 600;">
+                                    Total ({{ order.currency }})
+                                </td>
+                                <td></td>
+                                <td style="font-weight: 600; text-align: right;">
                                     {{order.total}}
                                 </td>
                             </tr>
@@ -107,17 +131,19 @@
                     <ion-item class="item-divider">
                         Shipping Company
                     </ion-item>
-                    <ion-item>
+                    <ion-item class="item-icon-left">
+                        <i class="icon typcn typcn-mail"></i>
                         <input type="text" ng-model="menuVm.trackingOrders[order.id]['company']" autocapitalize="none">
                     </ion-item>
                     <ion-item class="item-divider">
                         Tracking Reference
                     </ion-item>
-                    <ion-item>
+                    <ion-item class="item-icon-left">
+                        <i class="icon typcn typcn-tag"></i>
                         <input type="text" ng-model="menuVm.trackingOrders[order.id]['reference']" autocapitalize="none">
                     </ion-item>
                     <ion-item>
-                        <button class="button button-block button-royal icon-left ion-paper-airplane" ng-click="menuVm.markOrderShipped(order.id)">
+                        <button class="button button-block button-royal icon-left typcn typcn-tick" ng-click="menuVm.markOrderShipped(order.id)">
                             Mark As Dispatched
                         </button>
                     </ion-item>

@@ -61,7 +61,8 @@
       }
       else {
         menuVm.userSettings = {
-          stockTrigger: 3
+          stockTrigger: 3,
+          unshippedCount: 15
         };
       }
 
@@ -124,17 +125,17 @@
       number = Math.round(number);
       switch (number) {
         case 0:
-          return 'ion-checkmark-circled green-text';
+          return 'typcn typcn-tick green-text';
         case 1:
-          return 'ion-alert-circled amber-text';
+          return 'typcn typcn-warning amber-text';
         case 2:
-          return 'ion-close-circled red-text';
+          return 'typcn typcn-times red-text';
       }
     }
 
     function saveUserSettings() {
       Mithril.chest('userSettings', menuVm.userSettings);
-      Icarus.saved('Settings saved', 'ion-thumbsup', true, 2000);
+      Icarus.saved('Settings saved!', 'typcn typcn-thumbs-up icon-fadeup', true, 2000);
     }
 
     function getArrayLength(array) {
@@ -154,7 +155,7 @@
       menuVm.noStockProducts = 0;
       menuVm.trackingOrders = {};
       menuVm.sortUnshippedOrders = 'asc';
-      menuVm.sortUnshippedClass = 'typcn typcn-arrow-up-thick';
+      menuVm.sortUnshippedClass = 'typcn typcn-arrow-sorted-up';
     }
 
     function updateUserMeta() {
@@ -275,11 +276,11 @@
     function swapUnshippedSorting() {
       if (menuVm.sortUnshippedOrders === 'asc') {
         menuVm.sortUnshippedOrders = 'desc';
-        menuVm.sortUnshippedClass = 'typcn typcn-arrow-down-thick';
+        menuVm.sortUnshippedClass = 'typcn typcn-arrow-sorted-down';
       }
       else {
         menuVm.sortUnshippedOrders = 'asc';
-        menuVm.sortUnshippedClass = 'typcn typcn-arrow-up-thick';
+        menuVm.sortUnshippedClass = 'typcn typcn-arrow-sorted-up';
       }
 
       Icarus.spinner();
@@ -287,7 +288,7 @@
     }
 
     function getUnshippedOrders() {
-      menuVm.WooCommerce.get('orders?status=processing&per_page=15&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
+      menuVm.WooCommerce.get('orders?status=processing&per_page=' + menuVm.userSettings.unshippedCount + '&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
         Icarus.hide();
@@ -379,7 +380,7 @@
       });
 
       Icarus.hide();
-      Icarus.saved('Stock updated!', 'typcn typcn-tick', true, 2000);
+      Icarus.saved('Stock updated!', 'typcn typcn-thumbs-up icon-fadeup', true, 2000);
       menuVm.getAllProducts();
 
       $state.go('main.stock');
