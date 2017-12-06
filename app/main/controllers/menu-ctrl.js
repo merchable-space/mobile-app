@@ -154,7 +154,7 @@
       menuVm.noStockProducts = 0;
       menuVm.trackingOrders = {};
       menuVm.sortUnshippedOrders = 'asc';
-      menuVm.sortUnshippedClass = 'ion-android-funnel rotate-180';
+      menuVm.sortUnshippedClass = 'typcn typcn-arrow-up-thick';
     }
 
     function updateUserMeta() {
@@ -275,11 +275,11 @@
     function swapUnshippedSorting() {
       if (menuVm.sortUnshippedOrders === 'asc') {
         menuVm.sortUnshippedOrders = 'desc';
-        menuVm.sortUnshippedClass = 'ion-android-funnel';
+        menuVm.sortUnshippedClass = 'typcn typcn-arrow-down-thick';
       }
       else {
         menuVm.sortUnshippedOrders = 'asc';
-        menuVm.sortUnshippedClass = 'ion-android-funnel rotate-180';
+        menuVm.sortUnshippedClass = 'typcn typcn-arrow-up-thick';
       }
 
       Icarus.spinner();
@@ -331,7 +331,7 @@
       menuVm.WooCommerce.put('orders/' + id, completion, function (err, data, res) {
         if (res) {
           Icarus.hide();
-          Icarus.saved('Order shipped!', 'ion-thumbsup', true, 2000);
+          Icarus.saved('Order shipped!', 'typcn typcn-plane rotate-90 icon-flyleft', true, 2000);
           menuVm.getUnshippedOrders();
           menuVm.trackingOrders.id = null;
         }
@@ -379,7 +379,7 @@
       });
 
       Icarus.hide();
-      Icarus.saved('Stock updated!', 'ion-thumbsup', true, 2000);
+      Icarus.saved('Stock updated!', 'typcn typcn-tick', true, 2000);
       menuVm.getAllProducts();
 
       $state.go('main.stock');
