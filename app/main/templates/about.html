@@ -1,0 +1,28 @@
+<ion-view view-title="About">
+    <ion-content>
+        <div class="card">
+            <ion-list>
+                <ion-item class="item-divider">
+                    Current App Version
+                </ion-item>
+                <ion-item>
+                    {{ currentAppVersion }}
+                </ion-item>
+                <ion-item>
+                    <button class="button button-block button-royal icon-left typcn typcn-arrow-sync" ng-click="menuVm.checkUpdateLink()">
+                        Check for Update
+                    </button>
+                </ion-item>
+                <ion-item ng-if="menuVm.updateChecking = true && menuVm.updatedNeeded === false">
+                    You're on the latest version!
+                </ion-item>
+                <ion-item ng-if="menuVm.updateChecking = false && menuVm.updatedNeeded !== false">
+                    There's a new version available!
+                    <button class="button button-block button-royal icon-left typcn typcn-download" ng-click="menuVm.downloadUpdate()">
+                        Download
+                    </button>
+                </ion-item>
+            </ion-list>
+        </div>
+    </ion-content>
+</ion-view>

@@ -15,8 +15,15 @@
     API,
     MerchAPI,
     Mithril,
-    Icarus
+    Icarus,
+    $ionicPlatform
   ) {
+
+    $ionicPlatform.ready(function() {
+      cordova.getAppVersion.getVersionNumber().then(function (version) {
+        $scope.currentAppVersion = version;
+      });
+    });
 
     var menuVm = this;
 
@@ -27,6 +34,8 @@
     menuVm.saveUserSettings = saveUserSettings;
     menuVm.resetVariables = resetVariables;
     menuVm.updateUserMeta = updateUserMeta;
+    menuVm.checkUpdateLink = checkUpdateLink;
+    menuVm.downloadUpdate = downloadUpdate;
     menuVm.updateServiceStatus = updateServiceStatus;
     menuVm.togglePwdVisible = togglePwdVisible;
 
@@ -157,6 +166,7 @@
       menuVm.trackingOrders = {};
       menuVm.sortUnshippedOrders = 'asc';
       menuVm.sortUnshippedClass = 'typcn typcn-arrow-sorted-up';
+      menuVm.updateChecking = false;
     }
 
     function updateUserMeta() {
@@ -176,7 +186,31 @@
     }
 
     function serviceStatusLink(url) {
-      cordova.InAppBrowser.open(url, '_blank');
+      cordova.InAppBrowser.open(url, '_system', 'location=no');
+    }
+
+    function checkUpdateLink() {
+      Icarus.spinner();
+      menuVm.updateChecking = true;
+
+      MerchAPI.getAppUpdate($scope.currentAppVersion)
+      .then(function (resp) {
+          resp = resp.data;
+
+          if (resp.newest_file !== 'false') {
+            menuVm.updatedNeeded = false;
+            Icarus.hide();
+          }
+          else {
+            menuVm.updatedNeeded = true;
+            menuVm.updateUrl = resp.newest_file;
+            Icarus.hide();
+          }
+      });
+    }
+
+    function downloadUpdate() {
+      return false;
     }
 
     // PRODUCTS

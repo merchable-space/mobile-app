@@ -13,7 +13,8 @@ angular.module('main')
         getSiteMeta: getSiteMeta,
         getUserMeta: getUserMeta,
         getUserSub: getUserSub,
-        getServiceStatus: getServiceStatus
+        getServiceStatus: getServiceStatus,
+        getAppUpdate: getAppUpdate
     };
 
     return functions;
@@ -55,6 +56,19 @@ angular.module('main')
             Icarus.alert('Unable To Login', error.message);
             return false;
         });
+    }
+
+    function getAppUpdate(version) {
+        var req = {
+            method: 'GET',
+            url: 'https://api.merchable.space/get_app_update.php',
+            headers: {
+              'version': version,
+              'api_key': 'jICLzvKFaCCUFfrGqer9'
+            }
+        };
+
+        return $http(req);
     }
 
     function getSiteMeta() {
