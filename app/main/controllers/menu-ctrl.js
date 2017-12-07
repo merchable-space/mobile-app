@@ -374,7 +374,6 @@
 
     function closeShippingModal() {
       menuVm.shippingModal.hide();
-      $scope.shippingId = null;
     }
 
     function markOrderShipped() {
@@ -415,9 +414,11 @@
         if (res) {
           menuVm.closeShippingModal();
           Icarus.hide();
-          Icarus.saved('Order shipped!', 'typcn typcn-plane rotate-90 icon-flyleft', true, 2000);
+          Icarus.saved('Order dispatched!', 'typcn typcn-plane rotate-90 icon-flyleft', true, 2000);
           menuVm.getUnshippedOrders(false);
+
           menuVm.trackingOrders.id = null;
+          $scope.shippingId = null;
         }
       });
     }

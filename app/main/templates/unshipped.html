@@ -42,13 +42,10 @@
 
             <div class="card" ng-repeat="order in menuVm.unshippedOrders">
                 <ion-list>
-                    <ion-item class="item-divider item-dark item-icon-right">
+                    <ion-item class="item-divider item-icon-right">
                         Order #{{order.id}}
                         <div class="item-hint">{{order.date_created | date:"HH:mm, dd MMMM yyyy"}}</div>
                         <i class="icon typcn typcn-tick" ng-click="menuVm.openShippingModal(order.id)"></i>
-                    </ion-item>
-                    <ion-item class="item-divider">
-                        Shipping Address
                     </ion-item>
                     <ion-item>
                         <div style="font-weight: 600;font-size: 1.2em;">{{order.shipping.first_name}} {{order.shipping.last_name}}</div>
