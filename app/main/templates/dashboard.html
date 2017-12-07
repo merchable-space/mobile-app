@@ -11,17 +11,14 @@
 
         <div class="card">
             <ion-list>
-                <ion-item class="item-divider item-dark">
-                    Summary
-                </ion-item>
                 <ion-item class="item-divider">
                     Unshipped Orders
                 </ion-item>
-                <ion-item class="item-icon-right" ui-sref="main.unshipped">
+                <ion-item class="item-icon-right">
                     <div class="dashboard-number">
                         {{menuVm.unshippedProducts}}
                     </div>
-                    <i class="icon typcn typcn-chevron-right ghost"></i>
+                    <!-- <i class="icon typcn typcn-chevron-right ghost"></i> -->
                 </ion-item>
                 <ion-item class="item-divider">
                     Low Stock Warnings
@@ -44,4 +41,9 @@
             </ion-list>
         </div>
     </ion-content>
+
+    <ion-footer-bar class="bar-assertive item-icon-left" ng-click="menuVm.getAppUpdater()" ng-if="menuVm.updateNeeded === true">
+        <i class="icon typcn typcn-bell"></i>
+        <h1 class="title">Update Available</h1>
+    </ion-footer-bar>
 </ion-view>

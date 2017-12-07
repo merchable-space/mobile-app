@@ -8,7 +8,7 @@
             </ion-refresher>
 
             <div class="card" ng-if="menuVm.unshippedOrders.length > 1">
-                <ion-item class="item-icon-left" ng-click="menuVm.swapUnshippedSorting()">
+                <ion-item class="item-icon-right" ng-click="menuVm.swapUnshippedSorting()">
                     <i class="icon" ng-class="menuVm.sortUnshippedClass"></i>
                     <span ng-if="menuVm.sortUnshippedOrders === 'asc'">
                         Showing
@@ -42,9 +42,10 @@
 
             <div class="card" ng-repeat="order in menuVm.unshippedOrders">
                 <ion-list>
-                    <ion-item class="item-divider item-dark">
+                    <ion-item class="item-divider item-dark item-icon-right">
                         Order #{{order.id}}
                         <div class="item-hint">{{order.date_created | date:"HH:mm, dd MMMM yyyy"}}</div>
+                        <i class="icon typcn typcn-tick" ng-click="menuVm.openShippingModal(order.id)"></i>
                     </ion-item>
                     <ion-item class="item-divider">
                         Shipping Address
@@ -119,7 +120,7 @@
                             </tr>
                             <tr style="border-top: 1px solid rgb(131, 131, 131);">
                                 <td style="font-weight: 600;">
-                                    Total ({{ order.currency }})
+                                    Total
                                 </td>
                                 <td></td>
                                 <td style="font-weight: 600; text-align: right;">
@@ -127,25 +128,6 @@
                                 </td>
                             </tr>
                         </table>
-                    </ion-item>
-                    <ion-item class="item-divider">
-                        Shipping Company
-                    </ion-item>
-                    <ion-item class="item-icon-left">
-                        <i class="icon typcn typcn-mail"></i>
-                        <input type="text" ng-model="menuVm.trackingOrders[order.id]['company']" autocapitalize="none">
-                    </ion-item>
-                    <ion-item class="item-divider">
-                        Tracking Reference
-                    </ion-item>
-                    <ion-item class="item-icon-left">
-                        <i class="icon typcn typcn-tag"></i>
-                        <input type="text" ng-model="menuVm.trackingOrders[order.id]['reference']" autocapitalize="none">
-                    </ion-item>
-                    <ion-item>
-                        <button class="button button-block button-royal icon-left typcn typcn-tick" ng-click="menuVm.markOrderShipped(order.id)">
-                            Mark As Dispatched
-                        </button>
                     </ion-item>
                 </ion-list>
             </div>

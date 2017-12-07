@@ -18,12 +18,12 @@
                         <input type="number" ng-model="menuVm.stockToUpdate[variant.id]" required="required" autocapitalize="none">
                     </ion-item>
                 </div>
-                <ion-item>
-                    <button class="button button-block button-royal icon-left typcn typcn-tick" ng-click="menuVm.updateAllStock()">
-                        Update Stock
-                    </button>
-                </ion-item>
             </ion-list>
         </div>
     </ion-content>
+
+    <ion-footer-bar class="bar-balanced item-icon-left" ng-click="menuVm.updateAllStock()">
+        <i class="icon typcn typcn-tick"></i>
+        <h1 class="title">Save</h1>
+    </ion-footer-bar>
 </ion-view>

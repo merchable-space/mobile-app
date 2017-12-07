@@ -21,72 +21,42 @@
 
   </ion-side-menu-content>
 
-  <!-- SIDEMENU -->
   <ion-side-menu side="left">
-
-    <!-- menu header -->
     <ion-header-bar class="bar-dark">
       <h1 class="title">Navigation</h1>
     </ion-header-bar>
 
-    <!-- menu content -->
     <ion-content ng-controller="MenuCtrl">
       <ion-list>
         <ion-item menu-close class="item-icon-left" ui-sref="main.dashboard">
           <i class="icon typcn typcn-home-outline"></i>
           Dashboard
         </ion-item>
-        <ion-item class="item-divider">
-          Stock
-        </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.stock">
           <i class="icon typcn typcn-clipboard"></i>
           All Products
         </ion-item>
-        <!-- <ion-item menu-close class="item-icon-left" ui-sref="main.warnings">
-          <i class="icon ion-battery-low"></i>
-          Warnings
-        </ion-item>
-        <ion-item menu-close class="item-icon-left" ui-sref="main.unavailable">
-          <i class="icon ion-close-circled"></i>
-          Unavailable
-        </ion-item> -->
-        <ion-item class="item-divider">
-          Orders
-        </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.unshipped">
           <i class="icon typcn typcn-gift"></i>
-          Unshipped
-        </ion-item>
-        <ion-item class="item-divider">
-          Status
+          Unshipped Orders
         </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.subscription">
           <i class="icon typcn typcn-calendar"></i>
-          Subscription
+          Subscription Status
         </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.service">
           <i class="icon typcn typcn-flash"></i>
-          Service
-        </ion-item>
-        <ion-item menu-close class="item-icon-left" ui-sref="main.about">
-          <i class="icon typcn typcn-printer"></i>
-          About
-        </ion-item>
-        <ion-item class="item-divider">
-          User
+          Service Updates
         </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.settings">
           <i class="icon typcn typcn-spanner"></i>
           Settings
         </ion-item>
-        <ion-item menu-close class="item-icon-left" ng-click="menuVm.logout()">
-          <i class="icon typcn typcn-eject"></i>
-          Log Out
-        </ion-item>
       </ion-list>
     </ion-content>
-
+    <ion-footer-bar class="bar-dark item-icon-left" ng-click="menuVm.logout()">
+      <i class="icon typcn typcn-eject"></i>
+      <h1 class="title">Log Out</h1>
+    </ion-footer-bar>
   </ion-side-menu>
-
 </ion-side-menus>

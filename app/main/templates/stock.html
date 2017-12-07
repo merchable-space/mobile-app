@@ -7,12 +7,17 @@
         spinner="lines">
         </ion-refresher>
 
-        <div class="card" ng-repeat="product in menuVm.productList">
+        <div class="card" ng-repeat="product in menuVm.productList" ng-init="menuVm.stockViewShow(product.id)">
             <ion-list>
-                <ion-item class="item-divider">
+                <ion-item class="item-divider item-icon-right" ng-click="menuVm.stockViewToggle(product.id)">
                     {{product.name}}
-                    <div class="item-hint">{{product.categories[0].name}}</div>
+                    <i class="icon typcn" ng-class="menuVm.stockViewList[product.id] ? 'typcn-arrow-minimise' : 'typcn-arrow-maximise'"></i>
+                    <div class="item-hint">
+                        {{product.categories[0].name}}
+                    </div>
                 </ion-item>
+            </ion-list>
+            <ion-list ng-show="menuVm.stockViewList[product.id]">
                 <ion-item>
                     <img ng-src="{{product.images[0].src}}" style="width: 100%;" />
                 </ion-item>

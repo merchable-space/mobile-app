@@ -16,7 +16,8 @@
     MerchAPI,
     Mithril,
     Icarus,
-    $ionicPlatform
+    $ionicPlatform,
+    $ionicModal
   ) {
 
     $ionicPlatform.ready(function() {
@@ -35,9 +36,13 @@
     menuVm.resetVariables = resetVariables;
     menuVm.updateUserMeta = updateUserMeta;
     menuVm.checkUpdateLink = checkUpdateLink;
-    menuVm.downloadUpdate = downloadUpdate;
+    menuVm.getAppUpdater = getAppUpdater;
     menuVm.updateServiceStatus = updateServiceStatus;
     menuVm.togglePwdVisible = togglePwdVisible;
+    menuVm.stockViewToggle = stockViewToggle;
+    menuVm.stockViewShow = stockViewShow;
+    menuVm.openShippingModal = openShippingModal;
+    menuVm.closeShippingModal = closeShippingModal;
 
     // DEFINE PRODUCT FUNCTIONS
     menuVm.getAllProducts = getAllProducts;
@@ -52,6 +57,14 @@
     menuVm.goToSingleStock = goToSingleStock;
     menuVm.updateAllStock = updateAllStock;
     menuVm.serviceStatusLink = serviceStatusLink;
+
+    $ionicModal.fromTemplateUrl('main/templates/shipping-modal.html', {
+      scope: $scope,
+      animation: 'slide-in-up',
+      backdropClickToClose: false
+    }).then(function(modal) {
+      menuVm.shippingModal = modal;
+    });
 
     if (! Mithril.storage('userWPToken')) {
       // FORCE LOGOUT
@@ -115,9 +128,10 @@
       menuVm.returnAllVariantStock();
       menuVm.getStockWarnings();
       menuVm.updateServiceStatus();
+      menuVm.checkUpdateLink();
 
       // Hides the spinner; keep last
-      menuVm.getUnshippedOrders();
+      menuVm.getUnshippedOrders(true);
       $scope.$broadcast('scroll.refreshComplete');
     }
 
@@ -163,10 +177,11 @@
       menuVm.unshippedProducts = getArrayLength(Mithril.chest('unshippedOrders'));
       menuVm.lowStockProducts = 0;
       menuVm.noStockProducts = 0;
+      menuVm.stockViewList = {};
       menuVm.trackingOrders = {};
       menuVm.sortUnshippedOrders = 'asc';
       menuVm.sortUnshippedClass = 'typcn typcn-arrow-sorted-up';
-      menuVm.updateChecking = false;
+      menuVm.updateUrl = false;
     }
 
     function updateUserMeta() {
@@ -186,31 +201,45 @@
     }
 
     function serviceStatusLink(url) {
-      cordova.InAppBrowser.open(url, '_system', 'location=no');
+      openBrowser(url, '_blank');
+    }
+
+    function getAppUpdater() {
+      var url = 'https://api.merchable.space/updater.php?version=' + $scope.currentAppVersion;
+      openBrowser(url, '_system');
     }
 
     function checkUpdateLink() {
-      Icarus.spinner();
-      menuVm.updateChecking = true;
+      menuVm.updateNeeded = false;
 
       MerchAPI.getAppUpdate($scope.currentAppVersion)
       .then(function (resp) {
           resp = resp.data;
 
-          if (resp.newest_file !== 'false') {
-            menuVm.updatedNeeded = false;
-            Icarus.hide();
-          }
-          else {
-            menuVm.updatedNeeded = true;
-            menuVm.updateUrl = resp.newest_file;
-            Icarus.hide();
+          if (resp.new_file === true) {
+            menuVm.updateNeeded = true;
           }
       });
     }
 
-    function downloadUpdate() {
-      return false;
+    function stockViewShow(id) {
+      if (menuVm.stockViewList[id]) {
+        return false;
+      }
+      menuVm.stockViewList[id] = false;
+    }
+
+    function stockViewToggle(id) {
+      if (menuVm.stockViewList[id] === true) {
+        menuVm.stockViewList[id] = false;
+      }
+      else {
+        menuVm.stockViewList[id] = true;
+      }
+    }
+
+    function openBrowser(url, target) {
+      cordova.InAppBrowser.open(url, target, 'location=no');
     }
 
     // PRODUCTS
@@ -323,19 +352,33 @@
       }
 
       Icarus.spinner();
-      menuVm.getUnshippedOrders();
+      menuVm.getUnshippedOrders(true);
     }
 
-    function getUnshippedOrders() {
+    function getUnshippedOrders(autohide) {
       menuVm.WooCommerce.get('orders?status=processing&per_page=' + menuVm.userSettings.unshippedCount + '&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
-        Icarus.hide();
+
+        if (autohide === true) {
+          Icarus.hide();
+        }
       });
       $scope.$broadcast('scroll.refreshComplete');
     }
 
-    function markOrderShipped(id) {
+    function openShippingModal(id) {
+      $scope.shippingId = id;
+      menuVm.shippingModal.show();
+    }
+
+    function closeShippingModal() {
+      menuVm.shippingModal.hide();
+      $scope.shippingId = null;
+    }
+
+    function markOrderShipped() {
+      var id = $scope.shippingId;
       Icarus.spinner();
       var completion = {
           status: 'completed',
@@ -370,9 +413,10 @@
 
       menuVm.WooCommerce.put('orders/' + id, completion, function (err, data, res) {
         if (res) {
+          menuVm.closeShippingModal();
           Icarus.hide();
           Icarus.saved('Order shipped!', 'typcn typcn-plane rotate-90 icon-flyleft', true, 2000);
-          menuVm.getUnshippedOrders();
+          menuVm.getUnshippedOrders(false);
           menuVm.trackingOrders.id = null;
         }
       });

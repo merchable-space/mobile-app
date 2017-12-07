@@ -13,7 +13,8 @@
                         Check for Update
                     </button>
                 </ion-item>
-                <ion-item ng-if="menuVm.updateChecking = true && menuVm.updatedNeeded === false">
+                <ion-item class="item-balanced item-icon-left" ng-if="menuVm.updateChecking = true && menuVm.updatedNeeded === false">
+                    <i class="icon typcn typcn-tick"></i>
                     You're on the latest version!
                 </ion-item>
                 <ion-item ng-if="menuVm.updateChecking = false && menuVm.updatedNeeded !== false">

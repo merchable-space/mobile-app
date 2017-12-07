@@ -4,33 +4,26 @@
 
         <div class="card">
             <ion-list>
-                <ion-item class="item-divider">
-                    Store Name
-                </ion-item>
-                <ion-item>
+                <ion-item class="item-icon-left">
+                    <i class="icon typcn typcn-shopping-cart"></i>
                     <input type="text" ng-model="loginVm.user.store" required="required" autocapitalize="none">
                 </ion-item>
-                <ion-item class="item-divider">
-                    Username
-                </ion-item>
-                <ion-item>
+                <ion-item class="item-icon-left">
+                    <i class="icon typcn typcn-user"></i>
                     <input type="text" ng-model="loginVm.user.username" required="required" autocapitalize="none">
                 </ion-item>
-                <ion-item class="item-divider item-icon-right">
-                    Password
-                    <i ng-if="loginVm.showPassword" class="icon typcn typcn-key" ng-click="loginVm.togglePwdVisible()"></i>
-                    <i ng-if="!loginVm.showPassword" class="icon typcn typcn-key-outline hide-password" ng-click="loginVm.togglePwdVisible()"></i>
-                </ion-item>
-                <ion-item>
+                <ion-item class="item-icon-left item-icon-right">
+                    <i class="icon typcn typcn-key"></i>
                     <input ng-if="loginVm.showPassword" type="text" ng-model="loginVm.user.password" required="required" autocapitalize="none">
                     <input ng-if="!loginVm.showPassword" type="password" ng-model="loginVm.user.password" required="required" autocapitalize="none">
-                </ion-item>
-                <ion-item>
-                    <button class="button button-block button-royal" ng-click="loginVm.login()">
-                        Sign In
-                    </button>
+                    <i ng-if="loginVm.showPassword" class="icon typcn typcn-eye" ng-click="loginVm.togglePwdVisible()"></i>
+                    <i ng-if="!loginVm.showPassword" class="icon typcn typcn-eye ghost" ng-click="loginVm.togglePwdVisible()"></i>
                 </ion-item>
             </ion-list>
         </div>
     </ion-content>
+    <ion-footer-bar class="bar-royal item-icon-left" ng-click="loginVm.login()">
+        <i class="icon typcn typcn-lock-open"></i>
+        <h1 class="title">Sign In</h1>
+    </ion-footer-bar>
 </ion-view>

@@ -1,0 +1,30 @@
+<ion-modal-view>
+    <ion-header-bar class="item-icon-right bar-dark">
+        <h1 class="title">Dispatch - Order #{{shippingId}}</h1>
+        <i class="icon typcn typcn-times" ng-click="menuVm.closeShippingModal()"></i>
+    </ion-header-bar>
+
+    <ion-content>
+        <ion-list>
+            <ion-item class="item-divider">
+                Shipping Company
+            </ion-item>
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-mail"></i>
+                <input type="text" ng-model="menuVm.trackingOrders[order.id]['company']" autocapitalize="none">
+            </ion-item>
+            <ion-item class="item-divider">
+                Tracking Reference
+            </ion-item>
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-tag"></i>
+                <input type="text" ng-model="menuVm.trackingOrders[order.id]['reference']" autocapitalize="none">
+            </ion-item>
+        </ion-list>
+    </ion-content>
+
+    <ion-footer-bar class="bar-balanced item-icon-left" ng-click="menuVm.markOrderShipped()">
+        <i class="icon typcn typcn-tick"></i>
+        <h1 class="title">Mark Order as Dispatched</h1>
+    </ion-footer-bar>
+</ion-modal-view>
