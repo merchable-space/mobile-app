@@ -1,4 +1,4 @@
-<ion-view view-title="All Products">
+<ion-view view-title="All Products" hide-back-button="true">
     <ion-content>
         <ion-refresher on-refresh="menuVm.getAllProducts()"
         pulling-text="Pull to refresh..."
@@ -7,10 +7,10 @@
         spinner="lines">
         </ion-refresher>
 
-        <div class="card" ng-repeat="product in menuVm.productList" ng-init="menuVm.stockViewShow(product.id)">
+        <div class="card" ng-repeat="product in menuVm.productList | orderBy: 'name'" ng-init="menuVm.stockViewShow(product.id)">
             <ion-list>
                 <ion-item class="item-divider item-icon-right" ng-click="menuVm.stockViewToggle(product.id)">
-                    {{product.name}}
+                    <span class="product-name-spill" ng-bind-html="product.name"></span>
                     <i class="icon typcn" ng-class="menuVm.stockViewList[product.id] ? 'typcn-arrow-minimise' : 'typcn-arrow-maximise'"></i>
                     <div class="item-hint">
                         {{product.categories[0].name}}
@@ -31,12 +31,30 @@
                                 {{product.price | number:2}}
                             </td>
                         </tr>
-                        <tr>
+                        <tr ng-hide="product.manage_stock === false" ng-class="{'plain-text' : product.stock_quantity == null, 'amber-text' : product.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : product.stock_quantity == 0}">
                             <td style="font-weight: 600;">
                                 Stock
                             </td>
                             <td style="text-align: right;">
                                 {{product.stock_quantity}}
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="clear-table" ng-if="product.type === 'woosb'">
+                        <tr>
+                            <td style="font-weight: 600;">
+                                Price
+                            </td>
+                            <td style="text-align: right;">
+                                {{product.price | number:2}}
+                            </td>
+                        </tr>
+                        <tr ng-class="{'plain-text' : product.stock_quantity == null, 'amber-text' : product.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : product.stock_quantity == 0}">
+                            <td style="font-weight: 600;">
+                                Stock (lowest in bundle)
+                            </td>
+                            <td style="text-align: right;">
+                                {{product.stock_quantity || '—'}}
                             </td>
                         </tr>
                     </table>
@@ -52,7 +70,7 @@
                                 Stock
                             </td>
                         </tr>
-                        <tr ng-repeat="variant in menuVm.productVariants[product.id]" ng-class="{'amber-text' : variant.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : variant.stock_quantity == 0}">
+                        <tr ng-repeat="variant in menuVm.productVariants[product.id]" ng-class="{'plain-text' : variant.stock_quantity == null, 'amber-text' : variant.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : variant.stock_quantity == 0}">
                             <td>
                                 {{variant.sku}}
                             </td>
@@ -60,12 +78,12 @@
                                 {{variant.price | number:2}}
                             </td>
                             <td style="text-align: right;">
-                                {{variant.stock_quantity}}
+                                {{variant.stock_quantity || '—'}}
                             </td>
                         </tr>
                     </table>
                 </ion-item>
-                <ion-item class="item-divider item-icon-right" ng-click="menuVm.goToSingleStock(product.id)" ng-if="product.type === 'simple'">
+                <ion-item class="item-divider item-icon-right" ng-click="menuVm.goToSingleStock(product.id)" ng-if="product.type === 'simple'" ng-hide="product.manage_stock === false">
                     Update Stock
                     <i class="icon typcn typcn-pencil"></i>
                 </ion-item>

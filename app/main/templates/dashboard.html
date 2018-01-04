@@ -8,39 +8,83 @@
         </ion-refresher>
 
         <div class="card">
-            <img ng-src="{{menuVm.logoImageBase}}" style="width: 100%;margin: 10px auto 0px auto;" />
-        </div>
+            <img ng-src="{{menuVm.logoImageBase}}" style="width: 100%; margin: 10px auto 0px auto;" />
 
-        <div class="card">
-            <ion-list>
-                <ion-item class="item-divider">
-                    Unshipped Orders
-                </ion-item>
-                <ion-item class="item-icon-right">
+            <div class="row" style="padding: 5px 0px 0px 0px;">
+                <div class="col" ng-class="menuVm.unshippedProducts > 0 ? 'blue-text' : 'plain-text'">
                     <div class="dashboard-number">
                         {{menuVm.unshippedProducts}}
                     </div>
-                    <!-- <i class="icon typcn typcn-chevron-right ghost"></i> -->
-                </ion-item>
-                <ion-item class="item-divider">
-                    Low Stock Warnings
-                </ion-item>
-                <ion-item class="item-icon-right">
+                    <div class="dashboard-title">
+                        Unshipped
+                    </div>
+                </div>
+                <div class="col" ng-class="menuVm.lowStockProducts > 0 ? 'amber-text' : 'plain-text'">
                     <div class="dashboard-number">
                         {{menuVm.lowStockProducts}}
                     </div>
-                    <!-- <i class="icon typcn typcn-chevron-right ghost"></i> -->
-                </ion-item>
-                <ion-item class="item-divider">
-                    Products Out Of Stock
-                </ion-item>
-                <ion-item class="item-icon-right">
+                    <div class="dashboard-title">
+                        Low Stock
+                    </div>
+                </div>
+                <div class="col" ng-class="menuVm.noStockProducts > 0 ? 'red-text' : 'plain-text'">
                     <div class="dashboard-number">
                         {{menuVm.noStockProducts}}
                     </div>
-                    <!-- <i class="icon typcn typcn-chevron-right ghost"></i> -->
-                </ion-item>
-            </ion-list>
+                    <div class="dashboard-title">
+                        Out Of Stock
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card transparent" style="margin-top: -10px !important;">
+            <div class="row">
+                <div class="col dashboard-button" ui-sref="main.stock">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-clipboard"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        All Products
+                    </div>
+                </div>
+                <div class="col dashboard-button" ui-sref="main.unshipped">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-shopping-cart"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        Unshipped Orders
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 0px;">
+                <div class="col dashboard-button" ui-sref="main.subscription">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-calendar"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        Subscription Status
+                    </div>
+                </div>
+                <div class="col dashboard-button" ui-sref="main.service">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-flash"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        Service Updates
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 0px;">
+                <div class="col dashboard-button" ui-sref="main.settings">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-spanner"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        Settings
+                    </div>
+                </div>
+            </div>
         </div>
     </ion-content>
 

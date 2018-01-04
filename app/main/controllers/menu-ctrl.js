@@ -85,7 +85,7 @@
       else {
         menuVm.userSettings = {
           stockTrigger: 3,
-          unshippedCount: 15
+          unshippedCount: 15,
         };
       }
 
