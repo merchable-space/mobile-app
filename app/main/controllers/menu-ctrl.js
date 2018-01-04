@@ -24,6 +24,12 @@
       cordova.getAppVersion.getVersionNumber().then(function (version) {
         $scope.currentAppVersion = version;
       });
+
+      window.FirebasePlugin.onTokenRefresh(function(token) {
+        Mithril.storage('userPushId', token)
+      }, function(error) {
+        console.error(error);
+      });
     });
 
     var menuVm = this;
@@ -43,8 +49,7 @@
     menuVm.stockViewShow = stockViewShow;
     menuVm.openShippingModal = openShippingModal;
     menuVm.closeShippingModal = closeShippingModal;
-
-    // DEFINE PRODUCT FUNCTIONS
+    menuVm.registerPushDevice = registerPushDevice;
     menuVm.getAllProducts = getAllProducts;
     menuVm.getProductSingle = getProductSingle;
     menuVm.getProductVariants = getProductVariants;
@@ -78,6 +83,12 @@
     // GENERIC FUNCTIONS
     function startUserData() {
       menuVm.resetVariables();
+
+      window.FirebasePlugin.getToken(function(token) {
+        Mithril.storage('userPushId', token)
+      }, function(error) {
+          console.error(error);
+      });
 
       if (Mithril.chest('userSettings')) {
         menuVm.userSettings = Mithril.chest('userSettings');
@@ -207,6 +218,16 @@
     function getAppUpdater() {
       var url = 'https://api.merchable.space/updater.php?version=' + $scope.currentAppVersion;
       openBrowser(url, '_system');
+    }
+
+    function registerPushDevice() {
+      MerchAPI.registerDevice()
+      .then(function (resp) {
+          resp = resp.data;
+          console.log(resp);
+
+          Icarus.saved(resp, 'typcn typcn-device-phone icon-fadeup', true, 2000);
+      });
     }
 
     function checkUpdateLink() {
@@ -369,6 +390,7 @@
 
     function openShippingModal(id) {
       $scope.shippingId = id;
+      menuVm.trackingOrders[id] = {};
       menuVm.shippingModal.show();
     }
 
@@ -383,7 +405,7 @@
           status: 'completed',
       };
 
-      var trackingInfo = menuVm.trackingOrders[id] || null;
+      var trackingInfo = menuVm.trackingOrders[id];
 
       if (trackingInfo) {
         var noteDetails;
@@ -399,7 +421,7 @@
         if (trackingInfo['reference'] && !trackingInfo['company']) {
           Icarus.hide();
           Icarus.alert('Cannot Dispatch Order', 'Please include the shipping company if you are adding a tracking reference!');
-          return false;
+          return;
         }
 
         var trackNote = {

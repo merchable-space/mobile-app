@@ -77,7 +77,8 @@
                             </tr>
                             <tr ng-repeat="item in order.line_items">
                                 <td style="word-wrap: normal; white-space: normal;">
-                                    {{item.name}}
+                                    <div ng-bind-html="item.name"></div>
+                                    <div ng-bind-html="item.sku" class="item-hint"></div>
                                 </td>
                                 <td style="text-align: right;">
                                     {{item.quantity}}

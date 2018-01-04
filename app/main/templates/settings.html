@@ -16,15 +16,16 @@
                 <ion-item>
                     <input type="number" ng-model="menuVm.userSettings.unshippedCount" required="required" autocapitalize="none">
                 </ion-item>
-                <!-- <ion-item class="item-divider">
-                    Push Notifications
+                <ion-item class="item-divider">
+                    Enable Notifications
+                    <div class="item-hint">Allows your device to receive push notifications.</div>
                 </ion-item>
                 <ion-item>
-                    <button ng-disabled="menuVm.pushNotifsEnabled" class="button button-block button-royal" ng-click="menuVm.registerPush()">
+                    <button class="button button-block button-royal" ng-click="menuVm.registerPushDevice()">
                         Register Device
                     </button>
                 </ion-item>
-                <ion-item>
+                <!-- <ion-item>
                     <button ng-disabled="!menuVm.pushNotifsEnabled" class="button button-block button-royal" ng-click="menuVm.registerPush()">
                         Unregister Device
                     </button>

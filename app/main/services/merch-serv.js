@@ -14,7 +14,8 @@ angular.module('main')
         getUserMeta: getUserMeta,
         getUserSub: getUserSub,
         getServiceStatus: getServiceStatus,
-        getAppUpdate: getAppUpdate
+        getAppUpdate: getAppUpdate,
+        registerDevice: registerDevice,
     };
 
     return functions;
@@ -123,6 +124,22 @@ angular.module('main')
             url: 'https://api.merchable.space/get_service_status.php',
             headers: {
                 'api_key': 'jICLzvKFaCCUFfrGqer9'
+            }
+        };
+
+        return $http(req);
+    }
+
+    function registerDevice() {
+        var device = Mithril.storage('userPushId');
+        var store = Mithril.storage('userStore');
+
+        var req = {
+            method: 'GET',
+            url: 'https://api.merchable.space/register_device.php',
+            headers: {
+                'site': store,
+                'device': device
             }
         };
 
