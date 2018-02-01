@@ -3,7 +3,8 @@ angular.module('main', [
   'ionic',
   'ngCordova',
   'ui.router',
-  'ngStorage'
+  'ngStorage',
+  'countUp'
 ])
 .factory('httpRequestInterceptor', function ($injector) {
   return {
@@ -16,6 +17,11 @@ angular.module('main', [
 
       return config;
     }
+  };
+})
+.filter('capitalizeWord', function() {
+  return function(text) {
+    return (text) ? text.charAt(0).toUpperCase() + text.substr(1).toLowerCase() : '';
   };
 })
 .run(function($ionicPlatform, $injector) {
@@ -111,6 +117,22 @@ angular.module('main', [
         views: {
           'pageContent': {
             templateUrl: 'main/templates/subscription.html'
+          }
+        }
+      })
+      .state('main.stats', {
+        url: '/statistics',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/stats.html'
+          }
+        }
+      })
+      .state('main.past', {
+        url: '/past',
+        views: {
+          'pageContent': {
+            templateUrl: 'main/templates/past.html'
           }
         }
       })

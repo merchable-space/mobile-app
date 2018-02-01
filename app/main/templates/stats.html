@@ -1,0 +1,79 @@
+<ion-view view-title="Store Statistics" hide-back-button="true">
+    <ion-content class="blue">
+        <ion-refresher on-refresh="menuVm.getStoreStats()"
+        pulling-text="Pull to refresh..."
+        pulling-icon="ion-arrow-down-c"
+        refreshing-text="Loading..."
+        spinner="lines">
+        </ion-refresher>
+
+        <div class="card">
+            <ion-item class="item-icon-right item-divider" ng-click="menuVm.toggleReportPeriod()">
+                <span class="dashboard-text">{{menuVm.storeStatsFrom | date : 'dd MMMM yyyy'}} to {{menuVm.storeStatsTo | date : 'dd MMMM yyyy'}}</span>
+                <i class="icon typcn typcn-calendar-outline"></i>
+            </ion-item>
+            <ion-list ng-if="menuVm.showReportToggle">
+                <ion-item class="item-icon-right" ng-click="menuVm.getStoreStats('week')">
+                    1 week ago
+                    <i class="icon typcn typcn-tick" ng-if="menuVm.reportPeriod === 'week'"></i>
+                </ion-item>
+                <ion-item class="item-icon-right" ng-click="menuVm.getStoreStats('month')">
+                    1 month ago
+                    <i class="icon typcn typcn-tick" ng-if="menuVm.reportPeriod === 'month'"></i>
+                </ion-item>
+                <ion-item class="item-icon-right" ng-click="menuVm.getStoreStats('year')">
+                    1 year ago
+                    <i class="icon typcn typcn-tick" ng-if="menuVm.reportPeriod === 'year'"></i>
+                </ion-item>
+            </ion-list>
+        </div>
+
+        <div class="card">
+            <ion-item class="item-divider">
+                    Total Sales
+            </ion-item>
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-credit-card"></i>
+                <span class="counter-text">
+                    <span ng-bind-html="menuVm.currencySymbol"></span>
+                    <count-up ng-model="menuVm.storeStats.total" decimals="2" steps="20"></count-up>
+                </span>
+            </ion-item>
+        </div>
+
+        <div class="card">
+            <ion-item class="item-divider">
+                    Total Orders
+            </ion-item>
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-shopping-cart"></i>
+                <span class="counter-text">
+                    <count-up ng-model="menuVm.storeStats.orders" decimals="0" steps="20"></count-up>
+                </span>
+            </ion-item>
+        </div>
+
+        <div class="card">
+            <ion-item class="item-divider">
+                    Total Products Sold
+            </ion-item>
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-gift"></i>
+                <span class="counter-text">
+                    <count-up ng-model="menuVm.storeStats.products" decimals="0" steps="20"></count-up>
+                </span>
+            </ion-item>
+        </div>
+
+        <div class="card">
+            <ion-item class="item-divider">
+                    Most Popular Product
+                    <span class="badge badge-dark">{{menuVm.storeStats.popular.quantity}}</span>
+            </ion-item>
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-heart-full-outline"></i>
+                <span class="dashboard-text" ng-bind-html="menuVm.storeStats.popular.name"></span>
+            </ion-item>
+        </div>
+    </ion-content>
+</ion-view>

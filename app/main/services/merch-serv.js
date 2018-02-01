@@ -134,6 +134,14 @@ angular.module('main')
         var device = Mithril.storage('userPushId');
         var store = Mithril.storage('userStore');
 
+        if (!Mithril.storage('userPushId')) {
+            window.FirebasePlugin.getToken(function(token) {
+                Mithril.storage('userPushId', token)
+            }, function(error) {
+                Icarus.alert('Unable To Register Device', error);
+            });
+        }
+
         var req = {
             method: 'GET',
             url: 'https://api.merchable.space/register_device.php',

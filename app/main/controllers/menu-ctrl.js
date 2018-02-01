@@ -17,18 +17,22 @@
     Mithril,
     Icarus,
     $ionicPlatform,
-    $ionicModal
+    $ionicModal,
+    $filter,
+    $q
   ) {
 
     $ionicPlatform.ready(function() {
-      cordova.getAppVersion.getVersionNumber().then(function (version) {
-        $scope.currentAppVersion = version;
-      });
+      if (angular.isDefined(cordova)) {
+        cordova.getAppVersion.getVersionNumber().then(function (version) {
+          $scope.currentAppVersion = version;
+        });
+      }
 
       window.FirebasePlugin.onTokenRefresh(function(token) {
-        Mithril.storage('userPushId', token)
+        Mithril.storage('userPushId', token);
       }, function(error) {
-        console.error(error);
+        $log.log(error);
       });
     });
 
@@ -60,8 +64,14 @@
     menuVm.markOrderShipped = markOrderShipped;
     menuVm.goToVariantStock = goToVariantStock;
     menuVm.goToSingleStock = goToSingleStock;
+    menuVm.goToBundleStock = goToBundleStock;
     menuVm.updateAllStock = updateAllStock;
     menuVm.serviceStatusLink = serviceStatusLink;
+    menuVm.getPastOrders = getPastOrders;
+    menuVm.getStoreStats = getStoreStats;
+    menuVm.toggleReportPeriod = toggleReportPeriod;
+    menuVm.releaseNotes = releaseNotes;
+    menuVm.acknowledgeRelease = acknowledgeRelease;
 
     $ionicModal.fromTemplateUrl('main/templates/shipping-modal.html', {
       scope: $scope,
@@ -69,6 +79,14 @@
       backdropClickToClose: false
     }).then(function(modal) {
       menuVm.shippingModal = modal;
+    });
+
+    $ionicModal.fromTemplateUrl('main/templates/release-notes.html', {
+      scope: $scope,
+      animation: 'slide-in-up',
+      backdropClickToClose: false
+    }).then(function(modalTwo) {
+      menuVm.releaseModal = modalTwo;
     });
 
     if (! Mithril.storage('userWPToken')) {
@@ -83,12 +101,6 @@
     // GENERIC FUNCTIONS
     function startUserData() {
       menuVm.resetVariables();
-
-      window.FirebasePlugin.getToken(function(token) {
-        Mithril.storage('userPushId', token)
-      }, function(error) {
-          console.error(error);
-      });
 
       if (Mithril.chest('userSettings')) {
         menuVm.userSettings = Mithril.chest('userSettings');
@@ -140,6 +152,8 @@
       menuVm.getStockWarnings();
       menuVm.updateServiceStatus();
       menuVm.checkUpdateLink();
+      menuVm.getStoreStats();
+      menuVm.getPastOrders();
 
       // Hides the spinner; keep last
       menuVm.getUnshippedOrders(true);
@@ -154,6 +168,14 @@
 
     function togglePwdVisible() {
       menuVm.showPassword = menuVm.showPassword ? false : true;
+    }
+
+    function releaseNotes() {
+      menuVm.releaseModal.show();
+    }
+
+    function acknowledgeRelease() {
+      menuVm.releaseModal.hide();
     }
 
     function serviceStatusIcon(number) {
@@ -192,7 +214,15 @@
       menuVm.trackingOrders = {};
       menuVm.sortUnshippedOrders = 'asc';
       menuVm.sortUnshippedClass = 'typcn typcn-arrow-sorted-up';
+      menuVm.reportPeriod = 'week';
       menuVm.updateUrl = false;
+      menuVm.showReportToggle = false;
+      menuVm.storeStats = {
+        'total': 0.00,
+        'orders': 0,
+        'products': 0,
+        'popular': {'name': 'N/A', 'quantity': '-'}
+      };
     }
 
     function updateUserMeta() {
@@ -224,7 +254,6 @@
       MerchAPI.registerDevice()
       .then(function (resp) {
           resp = resp.data;
-          console.log(resp);
 
           Icarus.saved(resp, 'typcn typcn-device-phone icon-fadeup', true, 2000);
       });
@@ -260,7 +289,9 @@
     }
 
     function openBrowser(url, target) {
-      cordova.InAppBrowser.open(url, target, 'location=no');
+      if (angular.isDefined(cordova)) {
+        cordova.InAppBrowser.open(url, target, 'location=no');
+      }
     }
 
     // PRODUCTS
@@ -273,11 +304,12 @@
         menuVm.productList = products;
         menuVm.productSingles = {};
         menuVm.productVariants = {};
+        menuVm.productStockWarnings = {};
 
         angular.forEach(products, function(product) {
           var prodId = product.id;
 
-          if (product.type === 'simple') {
+          if (product.type === 'simple' || product.type === 'woosb') {
             menuVm.getProductSingle(prodId);
           }
 
@@ -294,12 +326,45 @@
     function getProductSingle(id) {
       menuVm.WooCommerce.get('products/' + id, function(err, data, res) {
         menuVm.productSingles[id] = JSON.parse(res);
+
+        if (menuVm.productSingles[id].stock_quantity <= menuVm.userSettings['stockTrigger']) {
+        menuVm.productStockWarnings[id] = 1;
+        }
+
+        if (menuVm.productSingles[id].stock_quantity === 0) {
+          menuVm.productStockWarnings[id] = 0;
+        }
+
+        if (menuVm.productSingles[id].stock_quantity === null) {
+          menuVm.productStockWarnings[id] = null;
+        }
       });
     }
 
     function getProductVariants(id) {
       menuVm.WooCommerce.get('products/' + id + '/variations', function(err, data, res) {
         menuVm.productVariants[id] = JSON.parse(res);
+
+        menuVm.productStockWarnings[id] = null;
+        var keepGoing = true;
+
+        angular.forEach(menuVm.productVariants[id], function(variant) {
+          if (keepGoing) {
+            if (variant.stock_quantity <= menuVm.userSettings['stockTrigger']) {
+              menuVm.productStockWarnings[id] = 1;
+
+              if (variant.stock_quantity === 0) {
+                menuVm.productStockWarnings[id] = 0;
+              }
+
+              if (variant.stock_quantity === null) {
+                menuVm.productStockWarnings[id] = null;
+              }
+
+              keepGoing = false;
+            }
+          }
+        });
       });
     }
 
@@ -310,6 +375,83 @@
 
       var variantList = Mithril.chest('allVariants');
       return variantList[id];
+    }
+
+    function getPastOrders() {
+      menuVm.WooCommerce.get('orders?status=completed&per_page=15&orderby=id&order=desc', function(err, data, res) {
+        Mithril.chest('pastOrders', JSON.parse(res));
+        menuVm.pastOrders = JSON.parse(res);
+      });
+
+      $scope.$broadcast('scroll.refreshComplete');
+    }
+
+    function getStoreStats(period) {
+      if (angular.isDefined(period)) {
+        menuVm.reportPeriod = period;
+        Icarus.spinner();
+      }
+
+      menuVm.showReportToggle = false;
+
+      var d = moment();
+      var now = d.format('YYYY-MM-DD');
+      var then;
+
+      switch (menuVm.reportPeriod) {
+        case 'week':
+          then = d.subtract(7, 'days').format('YYYY-MM-DD');
+          break;
+        case 'month':
+          then = d.subtract(1, 'month').format('YYYY-MM-DD');
+          break;
+        case 'year':
+          then = d.subtract(1, 'year').format('YYYY-MM-DD');
+          break;
+      }
+
+      menuVm.storeStatsFrom = then;
+      menuVm.storeStatsTo = now;
+
+      menuVm.WooCommerce.get('system_status', function(err, data, res) {
+        var sysStat = JSON.parse(res);
+        menuVm.currencySymbol = sysStat.settings['currency_symbol'];
+      });
+
+      menuVm.WooCommerce.get('reports/sales?date_min=' + then + '&date_max=' + now, function(err, data, res) {
+        var salesReport = JSON.parse(res);
+        salesReport = salesReport[0];
+
+        menuVm.storeStats.total = parseFloat(salesReport.total_sales);
+
+        if (isNaN(menuVm.storeStats.total)) {
+          menuVm.storeStats.total = 0.00;
+        }
+
+        menuVm.storeStats.orders = salesReport.total_orders;
+        menuVm.storeStats.products = salesReport.total_items;
+      });
+
+      menuVm.WooCommerce.get('reports/top_sellers?date_min=' + then + '&date_max=' + now, function(err, data, res) {
+        var productReport = JSON.parse(res);
+
+        if (productReport.length > 0) {
+          menuVm.storeStats.popular = productReport[0];
+        } else {
+          menuVm.storeStats.popular = {'name': 'N/A', 'quantity': '-'};
+        }
+
+        Icarus.hide();
+        $scope.$broadcast('scroll.refreshComplete');
+      });
+    }
+
+    function toggleReportPeriod() {
+      if (menuVm.showReportToggle === false) {
+        menuVm.showReportToggle = true;
+      } else {
+        menuVm.showReportToggle = false;
+      }
     }
 
     // STOCK
@@ -425,8 +567,8 @@
         }
 
         var trackNote = {
-          note: noteDetails,
-          customer_note: true
+          'note': noteDetails,
+          'customer_note': true
         };
 
         menuVm.WooCommerce.post('orders/' + id + '/notes', trackNote, function(err, data, res) {});
@@ -451,7 +593,19 @@
       menuVm.stockUpdating = 'single';
 
       var single = menuVm.productSingles[product];
-      menuVm.stockToUpdate[single.id] = single.stock_quantity;
+      menuVm.stockToUpdate[single.id] = {'stock': single.stock_quantity, 'price': parseFloat(single.regular_price), 'sale': single.on_sale, 'sale_price': parseFloat(single.sale_price)};
+      menuVm.currentlyStocking = single;
+
+      $state.go('main.stockUpdate');
+    }
+
+    function goToBundleStock(product) {
+      menuVm.currentProductStock = product;
+      menuVm.stockToUpdate = {};
+      menuVm.stockUpdating = 'woosb';
+
+      var single = menuVm.productSingles[product];
+      menuVm.stockToUpdate[single.id] = {'stock': single.stock_quantity, 'price': parseFloat(single.regular_price), 'sale': single.on_sale, 'sale_price': parseFloat(single.sale_price)};
       menuVm.currentlyStocking = single;
 
       $state.go('main.stockUpdate');
@@ -463,7 +617,7 @@
       menuVm.stockUpdating = 'variant';
 
       angular.forEach(menuVm.productVariants[product], function(variant) {
-        menuVm.stockToUpdate[variant.id] = variant.stock_quantity;
+        menuVm.stockToUpdate[variant.id] = {'stock': variant.stock_quantity, 'price': parseFloat(variant.regular_price), 'sale': variant.on_sale, 'sale_price': parseFloat(variant.sale_price)};
       });
 
       $state.go('main.stockUpdate');
@@ -471,22 +625,38 @@
 
     function updateAllStock() {
       Icarus.spinner();
-      angular.forEach(menuVm.stockToUpdate, function(stock, id) {
+      angular.forEach(menuVm.stockToUpdate, function(item, id) {
 
-        if (Mithril.empty(stock) || (!angular.isNumber(stock))) {
-          Icarus.alert('Error Updating Stock', 'Invalid value entered');
+        if (item.manage_stock) {
+          if (Mithril.empty(item.stock) || (!angular.isNumber(item.stock))) {
+            Icarus.alert('Error Updating Item', 'Invalid value entered');
+            return false;
+          }
+        }
+
+        if (Mithril.empty(item.price) || (!angular.isNumber(item.price))) {
+          Icarus.alert('Error Updating Item', 'Invalid value entered');
           return false;
         }
 
         var stockObj = {
-          stock_quantity: stock
+          'stock_quantity': item.stock,
+          'regular_price': item.price + '',
         };
+
+        if (item.sale) {
+          stockObj['on_sale'] = item.sale;
+          stockObj['sale_price'] = item.sale_price + '';
+        } else {
+          stockObj['on_sale'] = item.sale;
+          stockObj['sale_price'] = '';
+        }
 
         menuVm.WooCommerce.put('products/' + menuVm.currentProductStock + '/variations/' + id + '/', stockObj, function (err, data, res) {});
       });
 
       Icarus.hide();
-      Icarus.saved('Stock updated!', 'typcn typcn-thumbs-up icon-fadeup', true, 2000);
+      Icarus.saved('Product updated!', 'typcn typcn-thumbs-up icon-fadeup', true, 2000);
       menuVm.getAllProducts();
 
       $state.go('main.stock');

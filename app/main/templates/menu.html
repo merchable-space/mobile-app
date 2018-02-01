@@ -23,10 +23,6 @@
   </ion-side-menu-content>
 
   <ion-side-menu side="left">
-    <ion-header-bar class="bar-dark">
-      <h1 class="title">Navigation</h1>
-    </ion-header-bar>
-
     <ion-content ng-controller="MenuCtrl">
       <ion-list>
         <ion-item menu-close class="item-icon-left" ui-sref="main.dashboard">
@@ -41,6 +37,14 @@
           <i class="icon typcn typcn-shopping-cart"></i>
           Unshipped Orders
         </ion-item>
+        <ion-item menu-close class="item-icon-left" ui-sref="main.past">
+          <i class="icon typcn typcn-archive"></i>
+          Past Orders
+        </ion-item>
+        <ion-item menu-close class="item-icon-left" ui-sref="main.stats">
+          <i class="icon typcn typcn-chart-pie"></i>
+          Store Statistics
+        </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.subscription">
           <i class="icon typcn typcn-calendar"></i>
           Subscription Status
@@ -49,9 +53,16 @@
           <i class="icon typcn typcn-flash"></i>
           Service Updates
         </ion-item>
+        <ion-item class="item-divider">
+          System
+        </ion-item>
         <ion-item menu-close class="item-icon-left" ui-sref="main.settings">
           <i class="icon typcn typcn-spanner"></i>
           Settings
+        </ion-item>
+        <ion-item class="item-icon-left" ng-click="menuVm.releaseNotes()">
+          <i class="icon typcn typcn-news"></i>
+          Release Notes
         </ion-item>
       </ion-list>
     </ion-content>

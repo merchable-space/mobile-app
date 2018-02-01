@@ -1,0 +1,21 @@
+<ion-modal-view>
+    <ion-header-bar class="item-icon-right bar-dark">
+        <h1 class="title">Release Notes - v{{currentAppVersion}}</h1>
+        <i class="icon typcn typcn-times" ng-click="menuVm.acknowledgeRelease()"></i>
+    </ion-header-bar>
+
+    <ion-content>
+        <ion-list>
+            <ion-item class="item-divider">
+                What's New
+            </ion-item>
+            <ion-item>
+                <ul class="release-notes">
+                    <li>
+                        Product bundles now display the products inside the bundle correctly.
+                    </li>
+                </ul>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-modal-view>

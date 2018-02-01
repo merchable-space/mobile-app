@@ -1,5 +1,5 @@
 <ion-view view-title="All Products" hide-back-button="true">
-    <ion-content>
+    <ion-content class="red">
         <ion-refresher on-refresh="menuVm.getAllProducts()"
         pulling-text="Pull to refresh..."
         pulling-icon="ion-arrow-down-c"
@@ -10,7 +10,7 @@
         <div class="card" ng-repeat="product in menuVm.productList | orderBy: 'name'" ng-init="menuVm.stockViewShow(product.id)">
             <ion-list>
                 <ion-item class="item-divider item-icon-right" ng-click="menuVm.stockViewToggle(product.id)">
-                    <span class="product-name-spill" ng-bind-html="product.name"></span>
+                    <span class="product-name-spill" ng-class="{'amber-text semi-bold' :  menuVm.productStockWarnings[product.id] == 1, 'red-text full-bold' :  menuVm.productStockWarnings[product.id] == 0}" ng-bind-html="product.name"></span>
                     <i class="icon typcn" ng-class="menuVm.stockViewList[product.id] ? 'typcn-arrow-minimise' : 'typcn-arrow-maximise'"></i>
                     <div class="item-hint">
                         {{product.categories[0].name}}
@@ -21,6 +21,9 @@
                 <ion-item>
                     <img ng-src="{{product.images[0].src}}" style="width: 100%;" />
                 </ion-item>
+                <ion-item class="item-balanced" ng-if="product.on_sale">
+                    ON SALE
+                </ion-item>
                 <ion-item>
                     <table class="clear-table" ng-if="product.type === 'simple'">
                         <tr>
@@ -28,6 +31,7 @@
                                 Price
                             </td>
                             <td style="text-align: right;">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
                                 {{product.price | number:2}}
                             </td>
                         </tr>
@@ -46,6 +50,7 @@
                                 Price
                             </td>
                             <td style="text-align: right;">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
                                 {{product.price | number:2}}
                             </td>
                         </tr>
@@ -75,6 +80,7 @@
                                 {{variant.sku}}
                             </td>
                             <td style="text-align: right;">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
                                 {{variant.price | number:2}}
                             </td>
                             <td style="text-align: right;">
@@ -84,11 +90,15 @@
                     </table>
                 </ion-item>
                 <ion-item class="item-divider item-icon-right" ng-click="menuVm.goToSingleStock(product.id)" ng-if="product.type === 'simple'" ng-hide="product.manage_stock === false">
-                    Update Stock
+                    Update Product
+                    <i class="icon typcn typcn-pencil"></i>
+                </ion-item>
+                <ion-item class="item-divider item-icon-right" ng-click="menuVm.goToBundleStock(product.id)" ng-if="product.type === 'woosb'">
+                    Update Product
                     <i class="icon typcn typcn-pencil"></i>
                 </ion-item>
                 <ion-item class="item-divider item-icon-right" ng-click="menuVm.goToVariantStock(product.id)" ng-if="product.type === 'variable'">
-                    Update Stock
+                    Update Product
                     <i class="icon typcn typcn-pencil"></i>
                 </ion-item>
             </ion-list>

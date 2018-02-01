@@ -1,5 +1,5 @@
 <ion-view view-title="Dashboard">
-    <ion-content ng-controller="MenuCtrl">
+    <ion-content ng-controller="MenuCtrl" class="black">
         <ion-refresher on-refresh="menuVm.doRefresh()"
             pulling-text="Pull to refresh..."
             pulling-icon="ion-arrow-down-c"
@@ -40,7 +40,7 @@
 
         <div class="card transparent" style="margin-top: -10px !important;">
             <div class="row">
-                <div class="col dashboard-button" ui-sref="main.stock">
+                <div class="col dashboard-button assertive" ui-sref="main.stock">
                     <div class="dashboard-icon">
                         <i class="icon typcn typcn-clipboard"></i>
                     </div>
@@ -54,6 +54,24 @@
                     </div>
                     <div class="dashboard-title">
                         Unshipped Orders
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 0px;">
+                <div class="col dashboard-button" ui-sref="main.past">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-archive"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        Past Orders
+                    </div>
+                </div>
+                <div class="col dashboard-button" ui-sref="main.stats">
+                    <div class="dashboard-icon">
+                        <i class="icon typcn typcn-chart-pie"></i>
+                    </div>
+                    <div class="dashboard-title">
+                        Store Statistics
                     </div>
                 </div>
             </div>
@@ -72,16 +90,6 @@
                     </div>
                     <div class="dashboard-title">
                         Service Updates
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 0px;">
-                <div class="col dashboard-button" ui-sref="main.settings">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-spanner"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        Settings
                     </div>
                 </div>
             </div>

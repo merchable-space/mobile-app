@@ -1,29 +1,75 @@
-<ion-view view-title="Update Stock" hide-back-button="true">
-    <ion-content>
-        <div class="card">
-            <ion-list>
-                <div ng-if="menuVm.stockUpdating === 'single'">
-                    <ion-item class="item-divider">
-                        {{menuVm.currentlyStocking.sku}}
-                    </ion-item>
-                    <ion-item>
-                        <input type="number" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id]" required="required" autocapitalize="none">
-                    </ion-item>
-                </div>
-                <div ng-if="menuVm.stockUpdating === 'variant'" ng-repeat="variant in menuVm.productVariants[menuVm.currentProductStock]">
-                    <ion-item class="item-divider">
-                        {{variant.sku}}
-                    </ion-item>
-                    <ion-item>
-                        <input type="number" ng-model="menuVm.stockToUpdate[variant.id]" required="required" autocapitalize="none">
-                    </ion-item>
-                </div>
-            </ion-list>
+<ion-view view-title="Update Product" hide-back-button="true">
+    <ion-content class="red">
+        <div ng-if="menuVm.stockUpdating === 'single' || menuVm.stockUpdating === 'woosb'" class="card">
+            <ion-item>
+                {{menuVm.currentlyStocking.sku}}
+            </ion-item>
+            <ion-item class="item-divider">
+                Stock
+            </ion-item>
+            <ion-item>
+                <input ng-hide="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb'" type="number" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].stock" required="required" autocapitalize="none">
+                <span ng-show="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb'">Cannot update stock</span>
+            </ion-item>
+            <ion-item class="item-divider">
+                Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
+            </ion-item>
+            <ion-item>
+                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].price" required="required" autocapitalize="none">
+            </ion-item>
+            <ion-item class="item-toggle">
+                On Sale?
+                <label class="toggle toggle-balanced">
+                    <input type="checkbox" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </ion-item>
+            <ion-item class="item-divider" ng-if="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale">
+                Sale Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
+            </ion-item>
+            <ion-item ng-if="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale">
+                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale_price" required="required" autocapitalize="none">
+            </ion-item>
+        </div>
+        <div ng-if="menuVm.stockUpdating === 'variant'" ng-repeat="variant in menuVm.productVariants[menuVm.currentProductStock]" class="card">
+            <ion-item>
+                {{variant.sku}}
+            </ion-item>
+            <ion-item class="item-divider">
+                Stock
+            </ion-item>
+            <ion-item>
+                <input ng-hide="variant.manage_stock === false" type="number" ng-model="menuVm.stockToUpdate[variant.id].stock" required="required" autocapitalize="none">
+                <span ng-show="variant.manage_stock === false">Cannot update stock</span>
+            </ion-item>
+            <ion-item class="item-divider">
+                Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
+            </ion-item>
+            <ion-item>
+                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[variant.id].price" required="required" autocapitalize="none">
+            </ion-item>
+            <ion-item class="item-toggle">
+                On Sale?
+                <label class="toggle toggle-balanced">
+                    <input type="checkbox" ng-model="menuVm.stockToUpdate[variant.id].sale">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </ion-item>
+            <ion-item class="item-divider" ng-if="menuVm.stockToUpdate[variant.id].sale">
+                Sale Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
+            </ion-item>
+            <ion-item ng-if="menuVm.stockToUpdate[variant.id].sale">
+                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[variant.id].sale_price" required="required" autocapitalize="none">
+            </ion-item>
         </div>
     </ion-content>
 
-    <ion-footer-bar class="bar-balanced item-icon-left" ng-click="menuVm.updateAllStock()">
-        <i class="icon typcn typcn-tick"></i>
+    <ion-footer-bar class="bar-balanced item-icon-right" ng-click="menuVm.updateAllStock()">
         <h1 class="title">Save</h1>
+        <i class="icon typcn typcn-tick"></i>
     </ion-footer-bar>
 </ion-view>
