@@ -1,21 +1,22 @@
 <ion-view view-title="Update Product" hide-back-button="true">
     <ion-content class="red">
         <div ng-if="menuVm.stockUpdating === 'single' || menuVm.stockUpdating === 'woosb'" class="card">
-            <ion-item>
+            <ion-item class="item-divider">
                 {{menuVm.currentlyStocking.sku}}
             </ion-item>
-            <ion-item class="item-divider">
-                Stock
+            <ion-item class="item-squash" ng-hide="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb'">
+                <label class="item-input">
+                    <span class="input-label">Stock</span>
+                    <span class="price-symbol">⨯</span>
+                    <input type="number" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].stock" required="required" autocapitalize="none">
+                </label>
             </ion-item>
-            <ion-item>
-                <input ng-hide="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb'" type="number" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].stock" required="required" autocapitalize="none">
-                <span ng-show="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb'">Cannot update stock</span>
-            </ion-item>
-            <ion-item class="item-divider">
-                Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
-            </ion-item>
-            <ion-item>
-                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].price" required="required" autocapitalize="none">
+            <ion-item class="item-squash">
+                <label class="item-input">
+                    <span class="input-label">Price</span>
+                    <span class="price-symbol" ng-bind-html="menuVm.currencySymbol"></span>
+                    <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].price" required="required" autocapitalize="none">
+                </label>
             </ion-item>
             <ion-item class="item-toggle">
                 On Sale?
@@ -26,29 +27,74 @@
                     </div>
                 </label>
             </ion-item>
-            <ion-item class="item-divider" ng-if="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale">
-                Sale Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
-            </ion-item>
-            <ion-item ng-if="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale">
-                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale_price" required="required" autocapitalize="none">
+            <ion-item ng-if="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale" class="item-squash">
+                <label class="item-input">
+                    <span class="input-label">Sale Price</span>
+                    <span class="price-symbol" ng-bind-html="menuVm.currencySymbol"></span>
+                    <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[menuVm.currentlyStocking.id].sale_price" required="required" autocapitalize="none">
+                </label>
             </ion-item>
         </div>
+        <div ng-if="menuVm.stockUpdating === 'variant'" class="card">
+            <ion-item class="item-icon-right item-divider" ng-click="menuVm.toggleMultiStockEdit()">
+                <span class="dashboard-text">Bulk update variants</span>
+                <i class="icon typcn typcn-edit"></i>
+            </ion-item>
+            <ion-list ng-if="menuVm.showMultiStockEdit">
+                <ion-item class="item-squash">
+                    <label class="item-input">
+                        <span class="input-label">Stock</span>
+                        <span class="price-symbol">⨯</span>
+                        <input type="number" ng-model="menuVm.bulkUpdateStock" required="required" autocapitalize="none">
+                    </label>
+                </ion-item>
+                <ion-item class="item-squash">
+                    <label class="item-input">
+                        <span class="input-label">Price</span>
+                        <span class="price-symbol" ng-bind-html="menuVm.currencySymbol"></span>
+                        <input type="number" step="0.01" ng-model="menuVm.bulkUpdatePrice" required="required" autocapitalize="none">
+                    </label>
+                </ion-item>
+                <ion-item class="item-toggle">
+                    On Sale?
+                    <label class="toggle toggle-balanced">
+                        <input type="checkbox" ng-model="menuVm.bulkUpdateOnSale">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </ion-item>
+                <ion-item ng-if="menuVm.bulkUpdateOnSale" class="item-squash">
+                    <label class="item-input">
+                        <span class="input-label">Sale Price</span>
+                        <span class="price-symbol" ng-bind-html="menuVm.currencySymbol"></span>
+                        <input type="number" step="0.01" ng-model="menuVm.bulkUpdateSalePrice" required="required" autocapitalize="none">
+                    </label>
+                </ion-item>
+                <ion-item>
+                    <button class="button button-block button-royal" ng-click="menuVm.bulkUpdateMultiStock(menuVm.currentProductStock)">
+                        Bulk Update
+                    </button>
+                </ion-item>
+            </ion-list>
+        </div>
         <div ng-if="menuVm.stockUpdating === 'variant'" ng-repeat="variant in menuVm.productVariants[menuVm.currentProductStock]" class="card">
-            <ion-item>
+            <ion-item class="item-divider">
                 {{variant.sku}}
             </ion-item>
-            <ion-item class="item-divider">
-                Stock
+            <ion-item class="item-squash" ng-hide="variant.manage_stock === false">
+                <label class="item-input">
+                    <span class="input-label">Stock</span>
+                    <span class="price-symbol">⨯</span>
+                    <input type="number" ng-model="menuVm.stockToUpdate[variant.id].stock" required="required" autocapitalize="none">
+                </label>
             </ion-item>
-            <ion-item>
-                <input ng-hide="variant.manage_stock === false" type="number" ng-model="menuVm.stockToUpdate[variant.id].stock" required="required" autocapitalize="none">
-                <span ng-show="variant.manage_stock === false">Cannot update stock</span>
-            </ion-item>
-            <ion-item class="item-divider">
-                Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
-            </ion-item>
-            <ion-item>
-                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[variant.id].price" required="required" autocapitalize="none">
+            <ion-item class="item-squash">
+                <label class="item-input">
+                    <span class="input-label">Price</span>
+                    <span class="price-symbol" ng-bind-html="menuVm.currencySymbol"></span>
+                    <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[variant.id].price" required="required" autocapitalize="none">
+                </label>
             </ion-item>
             <ion-item class="item-toggle">
                 On Sale?
@@ -59,11 +105,12 @@
                     </div>
                 </label>
             </ion-item>
-            <ion-item class="item-divider" ng-if="menuVm.stockToUpdate[variant.id].sale">
-                Sale Price (<span ng-bind-html="menuVm.currencySymbol"></span>)
-            </ion-item>
-            <ion-item ng-if="menuVm.stockToUpdate[variant.id].sale">
-                <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[variant.id].sale_price" required="required" autocapitalize="none">
+            <ion-item ng-if="menuVm.stockToUpdate[variant.id].sale" class="item-squash">
+                <label class="item-input">
+                    <span class="input-label">Sale Price</span>
+                    <span class="price-symbol" ng-bind-html="menuVm.currencySymbol"></span>
+                    <input type="number" step="0.01" ng-model="menuVm.stockToUpdate[variant.id].sale_price" required="required" autocapitalize="none">
+                </label>
             </ion-item>
         </div>
     </ion-content>

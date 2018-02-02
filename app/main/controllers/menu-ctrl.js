@@ -70,6 +70,8 @@
     menuVm.getPastOrders = getPastOrders;
     menuVm.getStoreStats = getStoreStats;
     menuVm.toggleReportPeriod = toggleReportPeriod;
+    menuVm.toggleMultiStockEdit = toggleMultiStockEdit;
+    menuVm.bulkUpdateMultiStock = bulkUpdateMultiStock;
     menuVm.releaseNotes = releaseNotes;
     menuVm.acknowledgeRelease = acknowledgeRelease;
 
@@ -217,6 +219,10 @@
       menuVm.reportPeriod = 'week';
       menuVm.updateUrl = false;
       menuVm.showReportToggle = false;
+      menuVm.bulkUpdateStock = null;
+      menuVm.bulkUpdatePrice = null;
+      menuVm.bulkUpdateOnSale = false;
+      menuVm.bulkUpdateSalePrice = null;
       menuVm.storeStats = {
         'total': 0.00,
         'orders': 0,
@@ -454,6 +460,40 @@
       }
     }
 
+    function toggleMultiStockEdit() {
+      if (menuVm.showMultiStockEdit === false) {
+        menuVm.showMultiStockEdit = true;
+      } else {
+        menuVm.showMultiStockEdit = false;
+      }
+    }
+
+    function bulkUpdateMultiStock(id) {
+      angular.forEach(menuVm.productVariants[id], function(variant) {
+        variant = menuVm.stockToUpdate[variant.id];
+
+        if (menuVm.bulkUpdateStock != null) {
+          variant.stock = menuVm.bulkUpdateStock;
+        }
+
+        if (menuVm.bulkUpdatePrice != null) {
+          variant.price = menuVm.bulkUpdatePrice;
+        }
+        if (menuVm.bulkUpdateOnSale != null) {
+          variant.sale = menuVm.bulkUpdateOnSale;
+        }
+        if (menuVm.bulkUpdateSalePrice != null) {
+          variant.sale_price = menuVm.bulkUpdateSalePrice;
+        }
+      });
+
+      menuVm.bulkUpdateStock = null;
+      menuVm.bulkUpdatePrice = null;
+      menuVm.bulkUpdateOnSale = false;
+      menuVm.bulkUpdateSalePrice = null;
+      menuVm.showMultiStockEdit = false;
+    }
+
     // STOCK
 
     function returnAllVariantStock() {
@@ -612,6 +652,8 @@
     }
 
     function goToVariantStock(product) {
+      menuVm.showMultiStockEdit = false;
+
       menuVm.currentProductStock = product;
       menuVm.stockToUpdate = {};
       menuVm.stockUpdating = 'variant';

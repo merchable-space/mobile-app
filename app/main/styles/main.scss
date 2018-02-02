@@ -40,6 +40,30 @@ $ionicons-font-path: "../assets/fonts" !default;
     src: url('../assets/fonts/Share-Regular.ttf') format('truetype');
 }
 
+.icon-assertive {
+    color: $assertive;
+}
+
+.icon-energized {
+    color: $energized;
+}
+
+.icon-balanced {
+    color: $balanced;
+}
+
+.icon-calm {
+    color: $calm;
+}
+
+.icon-positive {
+    color: $positive;
+}
+
+.icon-royal {
+    color: $royal;
+}
+
 * {
 font-family: 'Share' !important;
 }
@@ -82,15 +106,28 @@ font-family: 'Share' !important;
 }
 
 .dashboard-number {
-    font-size: 2em;
+    font-size: 2.2em;
     font-weight: 700;
     text-align: center;
+    position: relative;
+    top: 6px;
 }
 
 .dashboard-title {
     text-align: center;
     font-size: 1.1em;
     margin-top: 10px;
+}
+
+.dashboard-link {
+    text-align: right;
+    font-size: 1.2em;
+    position: relative;
+    top: 2px;
+    float: right;
+    clear: none;
+    right: 3px;
+    width: 60%;
 }
 
 .dashboard-text {
@@ -102,7 +139,9 @@ font-family: 'Share' !important;
 
 .dashboard-icon {
     text-align: center;
-    font-size: 3em;
+    font-size: 2.5em;
+    position: relative;
+    top: 10px;
 }
 
 .dashboard-icon i.icon {
@@ -118,19 +157,27 @@ span.unshipped-count {
 }
 
 .dashboard-button {
-    background-color: #5b35da;
+    background-color: #272727;
     color: #FFF;
     border-radius: 10px;
     margin: 5px;
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.3)
 }
 
+.dashboard-info {
+    background-color: #f8f8f8;
+    color: rgb(0, 0, 0);
+    border-radius: 10px;
+    margin: 5px;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.3)
+}
+
 .dashboard-button:active {
-    background-color: #4629ae;
+    background-color: #3d3d3d;
 }
 
 .dashboard-button:link {
-    -webkit-tap-highlight-color: #4629ae;
+    -webkit-tap-highlight-color: #3d3d3d;
 }
 
 .transparent {
@@ -281,6 +328,46 @@ ul.release-notes li {
     white-space: normal;
     list-style-type: disc;
     margin-left: 15px;
+}
+
+.product-image-holder {
+    overflow: hidden;
+    height: 100px;
+    padding: 0;
+}
+
+img.product-image {
+    width: 100%;
+    position: relative;
+    bottom: 100%;
+}
+
+.item-toggle {
+    background-color: #f5f5f5;
+}
+
+.item-squash {
+    padding: 0 16px;
+}
+
+.item-squash div.cannot-stock {
+    padding: 12px 16px;
+    color: rgb(204, 204, 204);
+}
+
+.item-squash .item-input input,
+.item-squash .item-input textarea {
+    max-width: 50%;
+    position: absolute;
+    right: 0;
+    padding: 2px 6px 0 6px;
+}
+
+.price-symbol {
+    font-size: 1.2em;
+    position: relative;
+    left: 20px;
+    color: rgb(204, 204, 204);
 }
 
 .bundle-list {

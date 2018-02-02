@@ -1,5 +1,5 @@
 <ion-view view-title="Dashboard">
-    <ion-content ng-controller="MenuCtrl" class="black">
+    <ion-content ng-controller="MenuCtrl">
         <ion-refresher on-refresh="menuVm.doRefresh()"
             pulling-text="Pull to refresh..."
             pulling-icon="ion-arrow-down-c"
@@ -7,11 +7,13 @@
             spinner="lines">
         </ion-refresher>
 
-        <div class="card">
-            <img ng-src="{{menuVm.logoImageBase}}" style="width: 100%; margin: 10px auto 0px auto;" />
+        <div class="card transparent">
+            <img ng-src="{{menuVm.logoImageBase}}" style="height: 100px;" />
+        </div>
 
-            <div class="row" style="padding: 5px 0px 0px 0px;">
-                <div class="col" ng-class="menuVm.unshippedProducts > 0 ? 'blue-text' : 'plain-text'">
+        <div class="card transparent">
+            <div class="row">
+                <div class="col dashboard-info" ng-class="menuVm.unshippedProducts > 0 ? 'blue-text' : 'plain-text'">
                     <div class="dashboard-number">
                         {{menuVm.unshippedProducts}}
                     </div>
@@ -19,7 +21,7 @@
                         Unshipped
                     </div>
                 </div>
-                <div class="col" ng-class="menuVm.lowStockProducts > 0 ? 'amber-text' : 'plain-text'">
+                <div class="col dashboard-info" ng-class="menuVm.lowStockProducts > 0 ? 'amber-text' : 'plain-text'">
                     <div class="dashboard-number">
                         {{menuVm.lowStockProducts}}
                     </div>
@@ -27,7 +29,7 @@
                         Low Stock
                     </div>
                 </div>
-                <div class="col" ng-class="menuVm.noStockProducts > 0 ? 'red-text' : 'plain-text'">
+                <div class="col dashboard-info" ng-class="menuVm.noStockProducts > 0 ? 'red-text' : 'plain-text'">
                     <div class="dashboard-number">
                         {{menuVm.noStockProducts}}
                     </div>
@@ -38,58 +40,58 @@
             </div>
         </div>
 
-        <div class="card transparent" style="margin-top: -10px !important;">
+        <div class="card transparent" style="margin-top: -30px;">
             <div class="row">
-                <div class="col dashboard-button assertive" ui-sref="main.stock">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-clipboard"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        All Products
+                <div class="col dashboard-button" ui-sref="main.stock">
+                    <div>
+                        <i class="icon icon-assertive typcn typcn-clipboard dashboard-icon"></i>
+                        <span class="dashboard-link">
+                            All Products
+                        </span>
                     </div>
                 </div>
                 <div class="col dashboard-button" ui-sref="main.unshipped">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-shopping-cart"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        Unshipped Orders
+                    <div>
+                        <i class="icon icon-royal typcn typcn-shopping-cart dashboard-icon"></i>
+                        <span class="dashboard-link">
+                            Unshipped Orders
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="row" style="margin-top: 0px;">
+            <div class="row">
                 <div class="col dashboard-button" ui-sref="main.past">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-archive"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        Past Orders
+                    <div>
+                        <i class="icon icon-calm typcn typcn-archive dashboard-icon"></i>
+                        <span class="dashboard-link">
+                            Past Orders
+                        </span>
                     </div>
                 </div>
                 <div class="col dashboard-button" ui-sref="main.stats">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-chart-pie"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        Store Statistics
+                    <div>
+                        <i class="icon icon-positive typcn typcn-chart-pie dashboard-icon"></i>
+                        <span class="dashboard-link">
+                            Store Statistics
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="row" style="margin-top: 0px;">
+            <div class="row">
                 <div class="col dashboard-button" ui-sref="main.subscription">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-calendar"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        Subscription Status
+                    <div>
+                        <i class="icon icon-energized typcn typcn-calendar dashboard-icon"></i>
+                        <span class="dashboard-link">
+                            Subscription Status
+                        </span>
                     </div>
                 </div>
                 <div class="col dashboard-button" ui-sref="main.service">
-                    <div class="dashboard-icon">
-                        <i class="icon typcn typcn-flash"></i>
-                    </div>
-                    <div class="dashboard-title">
-                        Service Updates
+                    <div>
+                        <i class="icon icon-balanced typcn typcn-flash dashboard-icon"></i>
+                        <span class="dashboard-link">
+                            Service Updates
+                        </span>
                     </div>
                 </div>
             </div>

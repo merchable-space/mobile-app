@@ -18,8 +18,8 @@
                 </ion-item>
             </ion-list>
             <ion-list ng-show="menuVm.stockViewList[product.id]">
-                <ion-item>
-                    <img ng-src="{{product.images[0].src}}" style="width: 100%;" />
+                <ion-item class="product-image-holder">
+                    <img class="product-image" ng-src="{{product.images[0].src}}" />
                 </ion-item>
                 <ion-item class="item-balanced" ng-if="product.on_sale">
                     ON SALE
