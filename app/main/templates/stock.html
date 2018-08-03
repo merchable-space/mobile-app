@@ -21,6 +21,9 @@
                 <ion-item class="product-image-holder">
                     <img class="product-image" ng-src="{{product.images[0].src}}" />
                 </ion-item>
+                <ion-item class="item-assertive" ng-if="menuVm.productPreorders[product.id] === true">
+                    PREORDER
+                </ion-item>
                 <ion-item class="item-balanced" ng-if="product.on_sale">
                     ON SALE
                 </ion-item>
@@ -35,7 +38,7 @@
                                 {{product.price | number:2}}
                             </td>
                         </tr>
-                        <tr ng-hide="product.manage_stock === false" ng-class="{'plain-text' : product.stock_quantity == null, 'amber-text' : product.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : product.stock_quantity == 0}">
+                        <tr ng-hide="product.manage_stock === false || menuVm.productPreorders[product.id] === true" ng-class="{'plain-text' : product.stock_quantity == null, 'amber-text' : product.stock_quantity <= menuVm.userSettings['stockTrigger'], 'red-text semi-bold' : product.stock_quantity == 0}">
                             <td style="font-weight: 600;">
                                 Stock
                             </td>

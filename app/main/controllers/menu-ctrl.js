@@ -74,6 +74,8 @@
     menuVm.bulkUpdateMultiStock = bulkUpdateMultiStock;
     menuVm.releaseNotes = releaseNotes;
     menuVm.acknowledgeRelease = acknowledgeRelease;
+    menuVm.openBulkNotes = openBulkNotes;
+    menuVm.closeBulkNotes = closeBulkNotes;
 
     $ionicModal.fromTemplateUrl('main/templates/shipping-modal.html', {
       scope: $scope,
@@ -81,6 +83,14 @@
       backdropClickToClose: false
     }).then(function(modal) {
       menuVm.shippingModal = modal;
+    });
+
+    $ionicModal.fromTemplateUrl('main/templates/note-modal.html', {
+      scope: $scope,
+      animation: 'slide-in-up',
+      backdropClickToClose: false
+    }).then(function(modalThree) {
+      menuVm.bulkNotesModal = modalThree;
     });
 
     $ionicModal.fromTemplateUrl('main/templates/release-notes.html', {
@@ -311,6 +321,7 @@
         menuVm.productSingles = {};
         menuVm.productVariants = {};
         menuVm.productStockWarnings = {};
+        menuVm.productPreorders = {};
 
         angular.forEach(products, function(product) {
           var prodId = product.id;
@@ -344,6 +355,15 @@
         if (menuVm.productSingles[id].stock_quantity === null) {
           menuVm.productStockWarnings[id] = null;
         }
+
+        menuVm.productPreorders[id] = false;
+
+        angular.forEach(menuVm.productSingles[id].meta_data, function(metadata) {
+          if (metadata.key === '_ywpo_preorder' && metadata.value === 'yes') {
+            menuVm.productPreorders[id] = true;
+            menuVm.productStockWarnings[id] = null;
+          }
+        })
       });
     }
 
@@ -562,12 +582,31 @@
       menuVm.WooCommerce.get('orders?status=processing&per_page=' + menuVm.userSettings.unshippedCount + '&orderby=id&order=' + menuVm.sortUnshippedOrders, function (err, data, res) {
         Mithril.chest('unshippedOrders', JSON.parse(res));
         menuVm.unshippedOrders = JSON.parse(res);
+        menuVm.preorderOrders = {};
 
         if (autohide === true) {
           Icarus.hide();
         }
+
+        angular.forEach(menuVm.unshippedOrders, function(unshipOrder) {
+          angular.forEach(unshipOrder.meta_data, function(unshipOrder) {
+            if (unshipOrder.meta_data.key === '_order_has_preorder' && unshipOrder.meta_data.value === 'yes') {
+              menuVm.preorderOrders[unshipOrder.id] = unshipOrder;
+            }
+          })
+        })
+
+        $log.log(menuVm.preorderOrders);
       });
       $scope.$broadcast('scroll.refreshComplete');
+    }
+
+    function openBulkNotes() {
+      menuVm.bulkNotesModal.show();
+    }
+
+    function closeBulkNotes() {
+      menuVm.bulkNotesModal.hide();
     }
 
     function openShippingModal(id) {

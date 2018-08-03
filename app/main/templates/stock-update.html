@@ -4,7 +4,7 @@
             <ion-item class="item-divider">
                 {{menuVm.currentlyStocking.sku}}
             </ion-item>
-            <ion-item class="item-squash" ng-hide="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb'">
+            <ion-item class="item-squash" ng-hide="menuVm.currentlyStocking.manage_stock === false || menuVm.currentlyStocking.type === 'woosb' || menuVm.currentlyStocking.id === true">
                 <label class="item-input">
                     <span class="input-label">Stock</span>
                     <span class="price-symbol">⨯</span>

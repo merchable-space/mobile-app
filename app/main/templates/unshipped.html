@@ -1,123 +1,127 @@
 <ion-view view-title="Unshipped Orders" hide-back-button="true">
-        <ion-content class="purple">
-            <ion-refresher on-refresh="menuVm.getUnshippedOrders()"
-            pulling-text="Pull to refresh..."
-            pulling-icon="ion-arrow-down-c"
-            refreshing-text="Loading..."
-            spinner="lines">
-            </ion-refresher>
+    <ion-header-bar class="item-icon-right">
+        <i class="icon typcn typcn-mail" ng-click="menuVm.sendBulkNotes()"></i>
+    </ion-header-bar>
 
-            <div class="card" ng-if="menuVm.unshippedOrders.length > 1">
-                <ion-item class="item-icon-right item-divider" ng-click="menuVm.swapUnshippedSorting()">
-                    <i class="icon" ng-class="menuVm.sortUnshippedClass"></i>
-                        Showing
-                        <span ng-if="menuVm.unshippedOrders.length >= 15"> {{ menuVm.userSettings.unshippedCount }} </span>
-                        <span ng-if="menuVm.unshippedOrders.length < 15"> {{ menuVm.unshippedOrders.length }} </span>
+    <ion-content class="purple">
+        <ion-refresher on-refresh="menuVm.getUnshippedOrders()"
+        pulling-text="Pull to refresh..."
+        pulling-icon="ion-arrow-down-c"
+        refreshing-text="Loading..."
+        spinner="lines">
+        </ion-refresher>
 
-                        <span ng-if="menuVm.sortUnshippedOrders === 'asc'"> orders, oldest first</span>
-                        <span ng-if="menuVm.sortUnshippedOrders === 'desc'"> orders, newest first</span>
-                    </span>
+        <div class="card" ng-if="menuVm.unshippedOrders.length > 1">
+            <ion-item class="item-icon-right item-divider" ng-click="menuVm.swapUnshippedSorting()">
+                <i class="icon" ng-class="menuVm.sortUnshippedClass"></i>
+                    Showing
+                    <span ng-if="menuVm.unshippedOrders.length >= 15"> {{ menuVm.userSettings.unshippedCount }} </span>
+                    <span ng-if="menuVm.unshippedOrders.length < 15"> {{ menuVm.unshippedOrders.length }} </span>
+
+                    <span ng-if="menuVm.sortUnshippedOrders === 'asc'"> orders, oldest first</span>
+                    <span ng-if="menuVm.sortUnshippedOrders === 'desc'"> orders, newest first</span>
+                </span>
+            </ion-item>
+        </div>
+
+        <div class="card" ng-if="menuVm.unshippedOrders.length < 1">
+            <ion-item class="item-icon-left">
+                <i class="icon typcn typcn-thumbs-ok green-text"></i>
+                Nothing left to ship!
+            </ion-item>
+        </div>
+
+        <div class="card" ng-repeat="order in menuVm.unshippedOrders">
+            <ion-list>
+                <ion-item class="item-divider item-icon-right">
+                    Order #{{order.id}}
+                    <div class="item-hint">{{order.date_created | date:"HH:mm, dd MMMM yyyy"}}</div>
+                    <i class="icon typcn typcn-tick" ng-click="menuVm.openShippingModal(order.id)"></i>
                 </ion-item>
-            </div>
-
-            <div class="card" ng-if="menuVm.unshippedOrders.length < 1">
-                <ion-item class="item-icon-left">
-                    <i class="icon typcn typcn-thumbs-ok green-text"></i>
-                    Nothing left to ship!
+                <ion-item>
+                    <div style="font-weight: 600;font-size: 1.2em;">{{order.shipping.first_name}} {{order.shipping.last_name}}</div>
+                    <div ng-if="order.shipping.company">{{order.shipping.company}}</div>
+                    <div ng-if="order.shipping.address_1">{{order.shipping.address_1}}</div>
+                    <div ng-if="order.shipping.address_2">{{order.shipping.address_2}}</div>
+                    <div ng-if="order.shipping.city">{{order.shipping.city}}</div>
+                    <div ng-if="order.shipping.state">{{order.shipping.state}}</div>
+                    <div>{{order.shipping.postcode}}</div>
+                    <div ng-if="order.shipping.country">{{order.shipping.country}}</div>
                 </ion-item>
-            </div>
-
-            <div class="card" ng-repeat="order in menuVm.unshippedOrders">
-                <ion-list>
-                    <ion-item class="item-divider item-icon-right">
-                        Order #{{order.id}}
-                        <div class="item-hint">{{order.date_created | date:"HH:mm, dd MMMM yyyy"}}</div>
-                        <i class="icon typcn typcn-tick" ng-click="menuVm.openShippingModal(order.id)"></i>
-                    </ion-item>
-                    <ion-item>
-                        <div style="font-weight: 600;font-size: 1.2em;">{{order.shipping.first_name}} {{order.shipping.last_name}}</div>
-                        <div ng-if="order.shipping.company">{{order.shipping.company}}</div>
-                        <div ng-if="order.shipping.address_1">{{order.shipping.address_1}}</div>
-                        <div ng-if="order.shipping.address_2">{{order.shipping.address_2}}</div>
-                        <div ng-if="order.shipping.city">{{order.shipping.city}}</div>
-                        <div ng-if="order.shipping.state">{{order.shipping.state}}</div>
-                        <div>{{order.shipping.postcode}}</div>
-                        <div ng-if="order.shipping.country">{{order.shipping.country}}</div>
-                    </ion-item>
-                    <ion-item class="item-divider">
-                        Order Details
-                    </ion-item>
-                    <ion-item>
-                        <table class="clear-table">
-                            <tr style="font-weight: 600; border-bottom: 1px solid rgb(131, 131, 131);">
-                                <td style="width:65%;">
-                                    Item
-                                </td>
-                                <td style="text-align: right;">
-                                    Qty
-                                </td>
-                                <td style="text-align: right;">
-                                    Price
-                                </td>
-                            </tr>
-                            <tr ng-repeat="item in order.line_items">
-                                <td style="word-wrap: normal; white-space: normal;" ng-class="item.meta_data[1]['key'] === 'woosb_parent_id' ? 'bundle-list' : ''" colspan="{{item.meta_data[1]['key'] === 'woosb_parent_id' ? '3' : '1'}}">
-                                    <div ng-bind-html="item.name"></div>
-                                    <div ng-hide="item.meta_data[1]['key'] === 'woosb_parent_id'" ng-bind-html="item.sku" class="item-hint"></div>
-                                </td>
-                                <td style="text-align: right;" ng-hide="item.meta_data[1]['key'] === 'woosb_parent_id'">
-                                    {{item.quantity}}
-                                </td>
-                                <td style="text-align: right;" ng-hide="item.meta_data[1]['key'] === 'woosb_parent_id'">
-                                    <span ng-bind-html="menuVm.currencySymbol"></span>
-                                    <span>{{item.price | number:2}}</span>
-                                </td>
-                            </tr>
-                        </table>
-                        <table class="clear-table" style="margin-top: 20px;">
-                            <tr>
-                                <td style="font-weight: 600;">
-                                    Shipping
-                                </td>
-                                <td></td>
-                                <td style="text-align: right;">
-                                    <span ng-bind-html="menuVm.currencySymbol"></span>
-                                    {{order.shipping_total}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 600;">
-                                    Tax
-                                </td>
-                                <td></td>
-                                <td style="text-align: right;">
-                                    <span ng-bind-html="menuVm.currencySymbol"></span>
-                                    {{order.total_tax}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 600;">
-                                    Discounts
-                                </td>
-                                <td></td>
-                                <td style="text-align: right;">
-                                    - <span ng-bind-html="menuVm.currencySymbol"></span>
-                                    {{order.discount_total}}
-                                </td>
-                            </tr>
-                            <tr style="border-top: 1px solid rgb(131, 131, 131);">
-                                <td style="font-weight: 600;">
-                                    Total
-                                </td>
-                                <td></td>
-                                <td style="font-weight: 600; text-align: right;">
-                                    <span ng-bind-html="menuVm.currencySymbol"></span>
-                                    {{order.total}}
-                                </td>
-                            </tr>
-                        </table>
-                    </ion-item>
-                </ion-list>
-            </div>
-        </ion-content>
-    </ion-view>
+                <ion-item class="item-divider">
+                    Order Details
+                </ion-item>
+                <ion-item>
+                    <table class="clear-table">
+                        <tr style="font-weight: 600; border-bottom: 1px solid rgb(131, 131, 131);">
+                            <td style="width:65%;">
+                                Item
+                            </td>
+                            <td style="text-align: right;">
+                                Qty
+                            </td>
+                            <td style="text-align: right;">
+                                Price
+                            </td>
+                        </tr>
+                        <tr ng-repeat="item in order.line_items">
+                            <td style="word-wrap: normal; white-space: normal;" ng-class="item.meta_data[1]['key'] === 'woosb_parent_id' ? 'bundle-list' : ''" colspan="{{item.meta_data[1]['key'] === 'woosb_parent_id' ? '3' : '1'}}">
+                                <div ng-bind-html="item.name"></div>
+                                <div ng-hide="item.meta_data[1]['key'] === 'woosb_parent_id'" ng-bind-html="item.sku" class="item-hint"></div>
+                            </td>
+                            <td style="text-align: right;" ng-hide="item.meta_data[1]['key'] === 'woosb_parent_id'">
+                                {{item.quantity}}
+                            </td>
+                            <td style="text-align: right;" ng-hide="item.meta_data[1]['key'] === 'woosb_parent_id'">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
+                                <span>{{item.price | number:2}}</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="clear-table" style="margin-top: 20px;">
+                        <tr>
+                            <td style="font-weight: 600;">
+                                Shipping
+                            </td>
+                            <td></td>
+                            <td style="text-align: right;">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
+                                {{order.shipping_total}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">
+                                Tax
+                            </td>
+                            <td></td>
+                            <td style="text-align: right;">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
+                                {{order.total_tax}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">
+                                Discounts
+                            </td>
+                            <td></td>
+                            <td style="text-align: right;">
+                                - <span ng-bind-html="menuVm.currencySymbol"></span>
+                                {{order.discount_total}}
+                            </td>
+                        </tr>
+                        <tr style="border-top: 1px solid rgb(131, 131, 131);">
+                            <td style="font-weight: 600;">
+                                Total
+                            </td>
+                            <td></td>
+                            <td style="font-weight: 600; text-align: right;">
+                                <span ng-bind-html="menuVm.currencySymbol"></span>
+                                {{order.total}}
+                            </td>
+                        </tr>
+                    </table>
+                </ion-item>
+            </ion-list>
+        </div>
+    </ion-content>
+</ion-view>

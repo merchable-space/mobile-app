@@ -1,0 +1,22 @@
+<ion-modal-view>
+    <ion-header-bar class="item-icon-right bar-dark">
+        <h1 class="title">Bulk Send Note</h1>
+        <i class="icon typcn typcn-times" ng-click="menuVm.closeBulkNotes()"></i>
+    </ion-header-bar>
+
+    <ion-content>
+        <ion-list>
+            <ion-item class="item-divider">
+                Preorders
+            </ion-item>
+            <ion-item ng-repeat="order in menuVm.preorderOrders">
+                Order #{{ order.id }} - {{ order.shipping.first_name }} {{ order.shipping.last_name }}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+
+    <ion-footer-bar class="bar-balanced item-icon-right" ng-click="">
+        <h1 class="title">Send Customer Notes</h1>
+        <i class="icon typcn typcn-tick"></i>
+    </ion-footer-bar>
+</ion-modal-view>
