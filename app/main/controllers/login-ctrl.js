@@ -25,7 +25,6 @@
       Mithril.destroy('userWPHeader');
     });
 
-
     var loginVm = this;
 
     loginVm.user = {};
@@ -33,7 +32,6 @@
 
     loginVm.login = login;
     loginVm.togglePwdVisible = togglePwdVisible;
-
 
     function login() {
       // Always remember

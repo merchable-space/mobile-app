@@ -23,14 +23,9 @@
   ) {
 
     $ionicPlatform.ready(function() {
-      if (angular.isDefined(cordova)) {
-        cordova.getAppVersion.getVersionNumber().then(function (version) {
-          $scope.currentAppVersion = version;
-        });
-      }
-
       window.FirebasePlugin.onTokenRefresh(function(token) {
         Mithril.storage('userPushId', token);
+        MerchAPI.registerDevice();
       }, function(error) {
         $log.log(error);
       });
@@ -113,6 +108,10 @@
     // GENERIC FUNCTIONS
     function startUserData() {
       menuVm.resetVariables();
+
+      $scope.currentAppVersion = '2.0';
+
+      MerchAPI.verifyWordpressUser();
 
       if (Mithril.chest('userSettings')) {
         menuVm.userSettings = Mithril.chest('userSettings');
@@ -239,6 +238,12 @@
         'products': 0,
         'popular': {'name': 'N/A', 'quantity': '-'}
       };
+
+      if (Mithril.storage('userWPDisplayName')) {
+        menuVm.displayName = Mithril.storage('userWPDisplayName');
+      } else {
+        menuVm.displayName = 'Unknown';
+      }
     }
 
     function updateUserMeta() {
@@ -363,7 +368,7 @@
             menuVm.productPreorders[id] = true;
             menuVm.productStockWarnings[id] = null;
           }
-        })
+        });
       });
     }
 
@@ -492,17 +497,17 @@
       angular.forEach(menuVm.productVariants[id], function(variant) {
         variant = menuVm.stockToUpdate[variant.id];
 
-        if (menuVm.bulkUpdateStock != null) {
+        if (menuVm.bulkUpdateStock !== null) {
           variant.stock = menuVm.bulkUpdateStock;
         }
 
-        if (menuVm.bulkUpdatePrice != null) {
+        if (menuVm.bulkUpdatePrice !== null) {
           variant.price = menuVm.bulkUpdatePrice;
         }
-        if (menuVm.bulkUpdateOnSale != null) {
+        if (menuVm.bulkUpdateOnSale !== null) {
           variant.sale = menuVm.bulkUpdateOnSale;
         }
-        if (menuVm.bulkUpdateSalePrice != null) {
+        if (menuVm.bulkUpdateSalePrice !== null) {
           variant.sale_price = menuVm.bulkUpdateSalePrice;
         }
       });
@@ -593,8 +598,8 @@
             if (unshipOrder.meta_data.key === '_order_has_preorder' && unshipOrder.meta_data.value === 'yes') {
               menuVm.preorderOrders[unshipOrder.id] = unshipOrder;
             }
-          })
-        })
+          });
+        });
 
         $log.log(menuVm.preorderOrders);
       });

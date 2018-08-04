@@ -10,6 +10,7 @@ angular.module('main')
 
     var functions = {
         authWordpressUser: authWordpressUser,
+        verifyWordpressUser: verifyWordpressUser,
         getSiteMeta: getSiteMeta,
         getUserMeta: getUserMeta,
         getUserSub: getUserSub,
@@ -19,7 +20,6 @@ angular.module('main')
     };
 
     return functions;
-
 
     function authWordpressUser(user) {
         if (user.remember_me) {
@@ -37,6 +37,7 @@ angular.module('main')
             if (response.token) {
                 Mithril.storage('userWPToken', response.token);
                 Mithril.storage('userWPHeader', 'Bearer ' + response.token);
+                Mithril.storage('userWPDisplayName', response.display_name);
                 $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
 
                 $state.go('main.dashboard');
@@ -55,6 +56,45 @@ angular.module('main')
             Mithril.storage('userWPToken', null);
 
             Icarus.alert('Unable To Login', error.message);
+            return false;
+        });
+    }
+
+    function verifyWordpressUser() {
+        var user = Mithril.storage('userCredentials');
+
+        return $http.post('https://' + user.store + '.merchable.space/wp-json/jwt-auth/v1/token', {
+            username: user.username,
+            password: user.password
+        })
+        .then(function(response) {
+            response = response.data;
+            if (response.token) {
+                Mithril.storage('userWPToken', response.token);
+                Mithril.storage('userWPHeader', 'Bearer ' + response.token);
+                Mithril.storage('userWPDisplayName', response.user_display_name);
+                $http.defaults.headers.common['WP-Authoriser'] = Mithril.storage('userWPHeader');
+
+                Icarus.hide();
+            }
+            else {
+                Icarus.hide();
+
+                Mithril.destroy('userWPToken');
+                Mithril.destroy('userWPHeader');
+                $state.go('login');
+
+                Icarus.alert('Unable To Login', 'Session Expired');
+            }
+        })
+        .catch(function() {
+            Icarus.hide();
+
+            Mithril.destroy('userWPToken');
+            Mithril.destroy('userWPHeader');
+            $state.go('login');
+
+            Icarus.alert('Unable To Login', 'Session Expired');
             return false;
         });
     }
@@ -131,23 +171,23 @@ angular.module('main')
     }
 
     function registerDevice() {
+        window.FirebasePlugin.getToken(function(token) {
+            Mithril.storage('userPushId', token);
+        }, function(error) {
+            Icarus.alert('Unable To Register Device', error);
+        });
+
         var device = Mithril.storage('userPushId');
         var store = Mithril.storage('userStore');
-
-        if (!Mithril.storage('userPushId')) {
-            window.FirebasePlugin.getToken(function(token) {
-                Mithril.storage('userPushId', token)
-            }, function(error) {
-                Icarus.alert('Unable To Register Device', error);
-            });
-        }
+        var user = Mithril.storage('userWPDisplayName');
 
         var req = {
             method: 'GET',
             url: 'https://api.merchable.space/register_device.php',
             headers: {
                 'site': store,
-                'device': device
+                'device': device,
+                'user': user,
             }
         };
 

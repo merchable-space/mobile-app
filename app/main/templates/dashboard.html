@@ -8,10 +8,13 @@
         </ion-refresher>
 
         <div class="card transparent">
-            <img ng-src="{{menuVm.logoImageBase}}" style="height: 100px;" />
+            <img ng-src="{{menuVm.logoImageBase}}" style="height: 150px;margin: auto;display: block;" />
+            <div style="color: #FFF;margin: 10px auto 0px auto;display: block;text-align: center;font-size: 1.6em;font-weight: 900;">
+                Welcome back, {{menuVm.displayName}}!
+            </div>
         </div>
 
-        <div class="card transparent">
+        <div class="card transparent" style="margin-top: -15px;">
             <div class="row">
                 <div class="col dashboard-info" ng-class="menuVm.unshippedProducts > 0 ? 'blue-text' : 'plain-text'">
                     <div class="dashboard-number">

@@ -19,7 +19,6 @@ angular.module('main')
 
     return functions;
 
-
     function registerDevice() {
         var deviceUuid = $cordovaDevice.getUUID();
         return $http.post('https://cp.pushwoosh.com/json/1.3/registerDevice', {
